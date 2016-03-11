@@ -6,7 +6,7 @@
 //  Copyright © 2016 Praxent. All rights reserved.
 //
 
-import Foundation
+import FBSDKLoginKit
 
 class SocialShareFacebook: SocialShareTool {
     

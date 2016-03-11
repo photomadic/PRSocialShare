@@ -8,9 +8,8 @@
 //  Copyright © 2015 Praxent. All rights reserved.
 //
 
-import CoreData
-import UIKit
-import Social
+import FBSDKLoginKit
+import TwitterKit
 
 public enum SocialShareOutlet: String {
     case Facebook = "facebook"
