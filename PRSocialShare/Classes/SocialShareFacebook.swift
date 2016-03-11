@@ -10,11 +10,13 @@ import FBSDKLoginKit
 
 class SocialShareFacebook: SocialShareTool {
     
-    var machine: String = "facebook"
-    var title: String = "facebook_title".localized
-
-    var composeView: SocialShareComposeViewController? = FBComposeViewController()
-    var validateRegex: String? = nil
+    override init() {
+        super.init()
+        
+        machine = SocialShareOutlet.Facebook
+        title = ""
+        composeView = FBComposeViewController()
+    }
     
 }
 

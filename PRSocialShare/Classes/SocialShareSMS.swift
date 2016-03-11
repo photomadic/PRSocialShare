@@ -50,34 +50,40 @@ class SocialShareTextDelegate: NSObject, UITextFieldDelegate {
     }
 }
 
+enum SocialShareSMSError: ErrorType {
+    case InvalidUserInput
+    case InvalidSharedLink
+}
+
 class SocialShareSMS: SocialShareTool {
     
-    var machine: String = "sms"
-    var title: String = "sms_title".localized
+    var twilioSID :String!
+    var twilioToken :String!
+    var fromNumber :String!
     
-    var composeView: SocialShareComposeViewController? = nil
-    var validateRegex: String? = nil
-    
-    let twilioSID = NSBundle.mainBundle().objectForInfoDictionaryKey("SocialShareTwilioSID")!
-    let twilioToken = NSBundle.mainBundle().objectForInfoDictionaryKey("SocialShareTwilioToken")!
-    let fromNumber = NSBundle.mainBundle().objectForInfoDictionaryKey("SocialShareSMSNumber")!
-    
-    func shareFromView(view: UIViewController) {
+    override init() {
+        super.init()
         
+        machine = SocialShareOutlet.SMS
+        title = ""
+    }
+    
+    override func shareFromView(view: UIViewController) {
         let alert = UIAlertController(title: "where_to_send".localized, message: "sms_gallery".localized, preferredStyle: .Alert)
         
-        alert.addAction(UIAlertAction(title: "send".localized, style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
-            
-            let request = self.buildTwilioRequest(alert.textFields![0].text!)
-            NSURLSession.sharedSession().dataTaskWithRequest(request, completionHandler: { (data, response, error) in
-                if (error != nil) {
-                    print(response, error)
-                }
+        alert.addAction(UIAlertAction(title: "Send".localized, style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            do {
+                let request = try self.buildTwilioRequest(alert.textFields![0].text!)
+                NSURLSession.sharedSession().dataTaskWithRequest(request!, completionHandler: { (data, response, error) in
+                    self.finishedShare(view)
+                }).resume()
+            } catch {
                 self.finishedShare(view)
-            }).resume()
+            }
             
         }))
-        alert.addAction(UIAlertAction(title: "cancel".localized, style: UIAlertActionStyle.Cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Cancel".localized, style: UIAlertActionStyle.Cancel, handler: nil))
+        
         alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
             textField.delegate = SocialShareTextDelegate()
             textField.keyboardType = .DecimalPad
@@ -86,8 +92,18 @@ class SocialShareSMS: SocialShareTool {
         view.presentViewController(alert, animated: true, completion: nil)
     }
     
-    func buildTwilioRequest(phone: String) -> NSMutableURLRequest {
-        let userInput = SocialShare.sharedInstance.sharedMessage!["sms"]!
+    func buildTwilioRequest(phone: String) throws -> NSMutableURLRequest? {
+        let userInput = SocialShare.sharedInstance.sharedMessage?["sms"]
+        guard userInput != nil else {
+            throw SocialShareSMSError.InvalidUserInput
+        }
+        
+        let sharedLink = SocialShare.sharedInstance.sharedLink
+        
+        guard userInput != nil && sharedLink != nil else {
+            throw SocialShareSMSError.InvalidSharedLink
+        }
+        
         let message = "\(userInput) \(SocialShare.sharedInstance.sharedLink)"
         
         let request = NSMutableURLRequest(URL: NSURL(string: "https://\(twilioSID):\(twilioToken)@api.twilio.com/2010-04-01/Accounts/\(twilioSID)/SMS/Messages")!)

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, SocialShareDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,7 +19,30 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    override func viewDidAppear(animated: Bool) {
+         super.viewDidAppear(animated)
+    }
 
-
+    @IBAction func showButtonDidTouch(sender: AnyObject) {
+        do {
+            let socialShare = try SocialShare(outlets: [SocialShareOutlet.Twitter, SocialShareOutlet.Facebook, SocialShareOutlet.SMS])
+            
+            socialShare.facebookShare.title = "Facebook"
+            socialShare.twitterShare.title = "Twitter"
+            socialShare.smsShare.title = "SMS"
+            
+            socialShare.delegate = self
+            
+            try socialShare.showFromViewController(self, sender: sender as! UIControl)
+        } catch {
+            print("\(error)")
+        }
+    }
+    
+    func didPerformShare() {
+        
+    }
+    
 }
 

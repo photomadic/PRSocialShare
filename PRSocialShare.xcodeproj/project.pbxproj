@@ -14,18 +14,30 @@
 		7D3AACBD1C92E38B005111C0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D3AACBB1C92E38B005111C0 /* LaunchScreen.storyboard */; };
 		7D3AACC81C92E38B005111C0 /* PRSocialShareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACC71C92E38B005111C0 /* PRSocialShareTests.swift */; };
 		7D3AACD31C92E38B005111C0 /* PRSocialShareUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACD21C92E38B005111C0 /* PRSocialShareUITests.swift */; };
-		7D3AACF01C92EFDF005111C0 /* PRSocialShare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACEC1C92EFDF005111C0 /* PRSocialShare.swift */; };
-		7D3AACF11C92EFDF005111C0 /* PRSocialShare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACEC1C92EFDF005111C0 /* PRSocialShare.swift */; };
-		7D3AACF21C92EFDF005111C0 /* PRSocialShare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACEC1C92EFDF005111C0 /* PRSocialShare.swift */; };
-		7D3AACF31C92EFDF005111C0 /* PRSocialShareFacebook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACED1C92EFDF005111C0 /* PRSocialShareFacebook.swift */; };
-		7D3AACF41C92EFDF005111C0 /* PRSocialShareFacebook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACED1C92EFDF005111C0 /* PRSocialShareFacebook.swift */; };
-		7D3AACF51C92EFDF005111C0 /* PRSocialShareFacebook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACED1C92EFDF005111C0 /* PRSocialShareFacebook.swift */; };
-		7D3AACF61C92EFDF005111C0 /* PRSocialShareSMS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACEE1C92EFDF005111C0 /* PRSocialShareSMS.swift */; };
-		7D3AACF71C92EFDF005111C0 /* PRSocialShareSMS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACEE1C92EFDF005111C0 /* PRSocialShareSMS.swift */; };
-		7D3AACF81C92EFDF005111C0 /* PRSocialShareSMS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACEE1C92EFDF005111C0 /* PRSocialShareSMS.swift */; };
-		7D3AACF91C92EFDF005111C0 /* PRSocialShareTwitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACEF1C92EFDF005111C0 /* PRSocialShareTwitter.swift */; };
-		7D3AACFA1C92EFDF005111C0 /* PRSocialShareTwitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACEF1C92EFDF005111C0 /* PRSocialShareTwitter.swift */; };
-		7D3AACFB1C92EFDF005111C0 /* PRSocialShareTwitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACEF1C92EFDF005111C0 /* PRSocialShareTwitter.swift */; };
+		7D3AACF01C92EFDF005111C0 /* SocialShare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACEC1C92EFDF005111C0 /* SocialShare.swift */; };
+		7D3AACF11C92EFDF005111C0 /* SocialShare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACEC1C92EFDF005111C0 /* SocialShare.swift */; };
+		7D3AACF21C92EFDF005111C0 /* SocialShare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACEC1C92EFDF005111C0 /* SocialShare.swift */; };
+		7D3AACF31C92EFDF005111C0 /* SocialShareFacebook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACED1C92EFDF005111C0 /* SocialShareFacebook.swift */; };
+		7D3AACF41C92EFDF005111C0 /* SocialShareFacebook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACED1C92EFDF005111C0 /* SocialShareFacebook.swift */; };
+		7D3AACF51C92EFDF005111C0 /* SocialShareFacebook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACED1C92EFDF005111C0 /* SocialShareFacebook.swift */; };
+		7D3AACF61C92EFDF005111C0 /* SocialShareSMS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACEE1C92EFDF005111C0 /* SocialShareSMS.swift */; };
+		7D3AACF71C92EFDF005111C0 /* SocialShareSMS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACEE1C92EFDF005111C0 /* SocialShareSMS.swift */; };
+		7D3AACF81C92EFDF005111C0 /* SocialShareSMS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACEE1C92EFDF005111C0 /* SocialShareSMS.swift */; };
+		7D3AACF91C92EFDF005111C0 /* SocialShareTwitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACEF1C92EFDF005111C0 /* SocialShareTwitter.swift */; };
+		7D3AACFA1C92EFDF005111C0 /* SocialShareTwitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACEF1C92EFDF005111C0 /* SocialShareTwitter.swift */; };
+		7D3AACFB1C92EFDF005111C0 /* SocialShareTwitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACEF1C92EFDF005111C0 /* SocialShareTwitter.swift */; };
+		7D3AACFE1C9359AF005111C0 /* SocialShareTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACFD1C9359AF005111C0 /* SocialShareTool.swift */; };
+		7D3AACFF1C9359AF005111C0 /* SocialShareTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACFD1C9359AF005111C0 /* SocialShareTool.swift */; };
+		7D3AAD001C9359AF005111C0 /* SocialShareTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AACFD1C9359AF005111C0 /* SocialShareTool.swift */; };
+		7D3AAD021C935D68005111C0 /* SocialShareComposeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AAD011C935D68005111C0 /* SocialShareComposeViewController.swift */; };
+		7D3AAD031C935D68005111C0 /* SocialShareComposeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AAD011C935D68005111C0 /* SocialShareComposeViewController.swift */; };
+		7D3AAD041C935D68005111C0 /* SocialShareComposeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AAD011C935D68005111C0 /* SocialShareComposeViewController.swift */; };
+		7D3AAD061C935DF4005111C0 /* UIAlertController+SocialShare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AAD051C935DF4005111C0 /* UIAlertController+SocialShare.swift */; };
+		7D3AAD071C935DF4005111C0 /* UIAlertController+SocialShare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AAD051C935DF4005111C0 /* UIAlertController+SocialShare.swift */; };
+		7D3AAD081C935DF4005111C0 /* UIAlertController+SocialShare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AAD051C935DF4005111C0 /* UIAlertController+SocialShare.swift */; };
+		7D3AAD0A1C935E2A005111C0 /* String+SocialShare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AAD091C935E2A005111C0 /* String+SocialShare.swift */; };
+		7D3AAD0B1C935E2A005111C0 /* String+SocialShare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AAD091C935E2A005111C0 /* String+SocialShare.swift */; };
+		7D3AAD0C1C935E2A005111C0 /* String+SocialShare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3AAD091C935E2A005111C0 /* String+SocialShare.swift */; };
 		B9523E05FA99CC2F7AC3D6FA /* Pods_PRSocialShareUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6054247881ACDF1D69684233 /* Pods_PRSocialShareUITests.framework */; };
 		BDA2747AFC9B938C760A652D /* Pods_PRSocialShare.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07244E854A9CF97EFB9B4797 /* Pods_PRSocialShare.framework */; };
 		D12BC3B56A44BFE8670E7D5A /* Pods_PRSocialShareTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBB0E1EFD12A009A446FD7B6 /* Pods_PRSocialShareTests.framework */; };
@@ -68,11 +80,15 @@
 		7D3AACD21C92E38B005111C0 /* PRSocialShareUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PRSocialShareUITests.swift; sourceTree = "<group>"; };
 		7D3AACD41C92E38B005111C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7D3AACE91C92EC5A005111C0 /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
-		7D3AACEC1C92EFDF005111C0 /* PRSocialShare.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PRSocialShare.swift; sourceTree = "<group>"; };
-		7D3AACED1C92EFDF005111C0 /* PRSocialShareFacebook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PRSocialShareFacebook.swift; sourceTree = "<group>"; };
-		7D3AACEE1C92EFDF005111C0 /* PRSocialShareSMS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PRSocialShareSMS.swift; sourceTree = "<group>"; };
-		7D3AACEF1C92EFDF005111C0 /* PRSocialShareTwitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PRSocialShareTwitter.swift; sourceTree = "<group>"; };
+		7D3AACEC1C92EFDF005111C0 /* SocialShare.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocialShare.swift; sourceTree = "<group>"; };
+		7D3AACED1C92EFDF005111C0 /* SocialShareFacebook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocialShareFacebook.swift; sourceTree = "<group>"; };
+		7D3AACEE1C92EFDF005111C0 /* SocialShareSMS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocialShareSMS.swift; sourceTree = "<group>"; };
+		7D3AACEF1C92EFDF005111C0 /* SocialShareTwitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocialShareTwitter.swift; sourceTree = "<group>"; };
 		7D3AACFC1C92EFF7005111C0 /* PRSocialShare.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = PRSocialShare.podspec; sourceTree = "<group>"; };
+		7D3AACFD1C9359AF005111C0 /* SocialShareTool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocialShareTool.swift; sourceTree = "<group>"; };
+		7D3AAD011C935D68005111C0 /* SocialShareComposeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocialShareComposeViewController.swift; sourceTree = "<group>"; };
+		7D3AAD051C935DF4005111C0 /* UIAlertController+SocialShare.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIAlertController+SocialShare.swift"; sourceTree = "<group>"; };
+		7D3AAD091C935E2A005111C0 /* String+SocialShare.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+SocialShare.swift"; sourceTree = "<group>"; };
 		9A4FCF98A6039A8E7623439B /* Pods-PRSocialShareUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PRSocialShareUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PRSocialShareUITests/Pods-PRSocialShareUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		D18A684D4F0CDB41A261C0C1 /* Pods-PRSocialShare.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PRSocialShare.release.xcconfig"; path = "Pods/Target Support Files/Pods-PRSocialShare/Pods-PRSocialShare.release.xcconfig"; sourceTree = "<group>"; };
 		D6C2DB705B06CF5CA1C4162A /* Pods-PRSocialShareTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PRSocialShareTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PRSocialShareTests/Pods-PRSocialShareTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -165,10 +181,14 @@
 		7D3AACEB1C92EFDF005111C0 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				7D3AACEC1C92EFDF005111C0 /* PRSocialShare.swift */,
-				7D3AACED1C92EFDF005111C0 /* PRSocialShareFacebook.swift */,
-				7D3AACEE1C92EFDF005111C0 /* PRSocialShareSMS.swift */,
-				7D3AACEF1C92EFDF005111C0 /* PRSocialShareTwitter.swift */,
+				7D3AACEC1C92EFDF005111C0 /* SocialShare.swift */,
+				7D3AACED1C92EFDF005111C0 /* SocialShareFacebook.swift */,
+				7D3AACEE1C92EFDF005111C0 /* SocialShareSMS.swift */,
+				7D3AACEF1C92EFDF005111C0 /* SocialShareTwitter.swift */,
+				7D3AACFD1C9359AF005111C0 /* SocialShareTool.swift */,
+				7D3AAD011C935D68005111C0 /* SocialShareComposeViewController.swift */,
+				7D3AAD051C935DF4005111C0 /* UIAlertController+SocialShare.swift */,
+				7D3AAD091C935E2A005111C0 /* String+SocialShare.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -459,11 +479,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7D3AACF31C92EFDF005111C0 /* PRSocialShareFacebook.swift in Sources */,
-				7D3AACF91C92EFDF005111C0 /* PRSocialShareTwitter.swift in Sources */,
-				7D3AACF61C92EFDF005111C0 /* PRSocialShareSMS.swift in Sources */,
+				7D3AACFE1C9359AF005111C0 /* SocialShareTool.swift in Sources */,
+				7D3AACF31C92EFDF005111C0 /* SocialShareFacebook.swift in Sources */,
+				7D3AAD061C935DF4005111C0 /* UIAlertController+SocialShare.swift in Sources */,
+				7D3AAD0A1C935E2A005111C0 /* String+SocialShare.swift in Sources */,
+				7D3AACF91C92EFDF005111C0 /* SocialShareTwitter.swift in Sources */,
+				7D3AACF61C92EFDF005111C0 /* SocialShareSMS.swift in Sources */,
+				7D3AAD021C935D68005111C0 /* SocialShareComposeViewController.swift in Sources */,
 				7D3AACB51C92E38B005111C0 /* ViewController.swift in Sources */,
-				7D3AACF01C92EFDF005111C0 /* PRSocialShare.swift in Sources */,
+				7D3AACF01C92EFDF005111C0 /* SocialShare.swift in Sources */,
 				7D3AACB31C92E38B005111C0 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -472,11 +496,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7D3AACF71C92EFDF005111C0 /* PRSocialShareSMS.swift in Sources */,
-				7D3AACF11C92EFDF005111C0 /* PRSocialShare.swift in Sources */,
-				7D3AACFA1C92EFDF005111C0 /* PRSocialShareTwitter.swift in Sources */,
-				7D3AACF41C92EFDF005111C0 /* PRSocialShareFacebook.swift in Sources */,
+				7D3AACFF1C9359AF005111C0 /* SocialShareTool.swift in Sources */,
+				7D3AAD071C935DF4005111C0 /* UIAlertController+SocialShare.swift in Sources */,
+				7D3AACF71C92EFDF005111C0 /* SocialShareSMS.swift in Sources */,
+				7D3AACF11C92EFDF005111C0 /* SocialShare.swift in Sources */,
+				7D3AACFA1C92EFDF005111C0 /* SocialShareTwitter.swift in Sources */,
+				7D3AACF41C92EFDF005111C0 /* SocialShareFacebook.swift in Sources */,
+				7D3AAD0B1C935E2A005111C0 /* String+SocialShare.swift in Sources */,
 				7D3AACC81C92E38B005111C0 /* PRSocialShareTests.swift in Sources */,
+				7D3AAD031C935D68005111C0 /* SocialShareComposeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -484,11 +512,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7D3AACF81C92EFDF005111C0 /* PRSocialShareSMS.swift in Sources */,
-				7D3AACF21C92EFDF005111C0 /* PRSocialShare.swift in Sources */,
-				7D3AACFB1C92EFDF005111C0 /* PRSocialShareTwitter.swift in Sources */,
-				7D3AACF51C92EFDF005111C0 /* PRSocialShareFacebook.swift in Sources */,
+				7D3AAD001C9359AF005111C0 /* SocialShareTool.swift in Sources */,
+				7D3AAD081C935DF4005111C0 /* UIAlertController+SocialShare.swift in Sources */,
+				7D3AACF81C92EFDF005111C0 /* SocialShareSMS.swift in Sources */,
+				7D3AACF21C92EFDF005111C0 /* SocialShare.swift in Sources */,
+				7D3AACFB1C92EFDF005111C0 /* SocialShareTwitter.swift in Sources */,
+				7D3AACF51C92EFDF005111C0 /* SocialShareFacebook.swift in Sources */,
+				7D3AAD0C1C935E2A005111C0 /* String+SocialShare.swift in Sources */,
 				7D3AACD31C92E38B005111C0 /* PRSocialShareUITests.swift in Sources */,
+				7D3AAD041C935D68005111C0 /* SocialShareComposeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,16 +10,17 @@ import TwitterKit
 
 class SocialShareTwitter: SocialShareTool {
     
-    var machine: String = "twitter"
-    var title: String = "twitter_title".localized
-    
-    var composeView: SocialShareComposeViewController? = TwitterComposeViewController()
-    var validateRegex: String? = nil
-    
-    init() {
-        let consumerKey = NSBundle.mainBundle().objectForInfoDictionaryKey("SocialShareTwitterConsumer") as! String
-        let secretKey = NSBundle.mainBundle().objectForInfoDictionaryKey("SocialShareTwitterSecret") as! String
-        Twitter.sharedInstance().startWithConsumerKey(consumerKey, consumerSecret: secretKey)
+    override init() {
+        super.init()
+        
+        machine = SocialShareOutlet.Twitter
+        title = ""
+        
+        composeView = TwitterComposeViewController()
+        
+        let consumerKey :String = ""
+        let secretKey :String = ""
+        //Twitter.sharedInstance().startWithConsumerKey(consumerKey, consumerSecret: secretKey)
     }
     
 }
