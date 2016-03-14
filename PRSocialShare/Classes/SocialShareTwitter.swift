@@ -10,22 +10,24 @@ import TwitterKit
 
 class SocialShareTwitter: SocialShareTool {
     
+    var consumerKey :String?
+    var secretKey :String?
+    
     override init() {
         super.init()
         
-        machine = SocialShareOutlet.Twitter
-        title = ""
-        
-        composeView = TwitterComposeViewController()
-        
-        let consumerKey :String = ""
-        let secretKey :String = ""
-        //Twitter.sharedInstance().startWithConsumerKey(consumerKey, consumerSecret: secretKey)
+        type = SocialShareOutlet.Twitter        
+        composeView = TwitterComposeViewController(shareTool: self)
     }
     
 }
 
 class TwitterComposeViewController: SocialShareComposeViewController {
+    
+    convenience init(shareTool: SocialShareTool) {
+        self.init()
+        self.shareTool = shareTool
+    }
     
     override func isContentValid() -> Bool {
         charactersRemaining = 117 - contentText.characters.count
@@ -37,7 +39,23 @@ class TwitterComposeViewController: SocialShareComposeViewController {
         return true
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
     override func userFinishedPost() {
+        let twitterTool = self.shareTool as! SocialShareTwitter
+        guard twitterTool.consumerKey != nil && !twitterTool.consumerKey!.isEmpty else {
+            print("Invalid consumer key")
+            return
+        }
+
+        guard twitterTool.secretKey != nil && !twitterTool.secretKey!.isEmpty else {
+            print("Invalid secret key!")
+            return
+        }
+        
+        Twitter.sharedInstance().startWithConsumerKey(twitterTool.consumerKey!, consumerSecret: twitterTool.secretKey!)
         
         if (Twitter.sharedInstance().sessionStore.session() != nil) {
             self.uploadMedia()
@@ -46,7 +64,7 @@ class TwitterComposeViewController: SocialShareComposeViewController {
         
         Twitter.sharedInstance().logInWithCompletion { (user, error) in
             if (user == nil || error != nil) {
-                print("Unable to authenticate Twitter user", error)
+                print("Unable to authenticate Twitter user: \(error)")
                 return
             }
             
@@ -62,7 +80,7 @@ class TwitterComposeViewController: SocialShareComposeViewController {
         
         let client = TWTRAPIClient(userID: Twitter.sharedInstance().sessionStore.session()!.userID)
         let endpoint = "https://upload.twitter.com/1.1/media/upload.json"
-        let imageData = UIImageJPEGRepresentation(SocialShare.sharedInstance.sharedImage!, 0.8)!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+        let imageData = UIImageJPEGRepresentation((shareTool.image)!, 0.8)!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
         let mediaParams = ["media_data": imageData]
         let uploadRequest = client.URLRequestWithMethod("POST", URL: endpoint, parameters: mediaParams, error: nil)
         
@@ -72,8 +90,7 @@ class TwitterComposeViewController: SocialShareComposeViewController {
                 return
             }
             
-            print("Error uploading media to Twitter: \(error?.localizedDescription)")
-            print(error)
+            print("Error uploading media to Twitter: \(error)")
             
             // Continue with the tweet but without any media attachments.
             self.postStatus(nil)
@@ -81,7 +98,7 @@ class TwitterComposeViewController: SocialShareComposeViewController {
     }
     
     func postStatus(data: NSData?) {
-        if (Twitter.sharedInstance().session() == "nil") {
+        guard Twitter.sharedInstance().session() != "nil" else {
             print("Twitter user must be logged in to continue.")
             return
         }
@@ -98,7 +115,7 @@ class TwitterComposeViewController: SocialShareComposeViewController {
             }
         }
         
-        var post = ["status": "\(self.contentText) \(SocialShare.sharedInstance.sharedLink)"]
+        var post = ["status": "\(self.contentText) \(shareTool.link)"]
         
         if (mediaId != "") {
             post["media_ids"] = mediaId
@@ -115,7 +132,7 @@ class TwitterComposeViewController: SocialShareComposeViewController {
                 return
             }
             
-            SocialShareTwitter().finishedShare(self.rootView)
+            self.shareTool.finishedShare(self.rootView, error: error)
         }
     }
     

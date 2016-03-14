@@ -10,6 +10,8 @@ import UIKit
 
 class ViewController: UIViewController, SocialShareDelegate {
 
+    @IBOutlet weak var image: UIImageView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -27,21 +29,53 @@ class ViewController: UIViewController, SocialShareDelegate {
     @IBAction func showButtonDidTouch(sender: AnyObject) {
         do {
             let socialShare = try SocialShare(outlets: [SocialShareOutlet.Twitter, SocialShareOutlet.Facebook, SocialShareOutlet.SMS])
-            
-            socialShare.facebookShare.title = "Facebook"
-            socialShare.twitterShare.title = "Twitter"
-            socialShare.smsShare.title = "SMS"
-            
             socialShare.delegate = self
             
+            // MARK: - Facebook configuration
+            socialShare.facebookShare.actionTitle = "Facebook"
+            // Facebook credentials - mandatory!
+            socialShare.facebookShare.appID = ""
+            // Facebook dummy data
+            socialShare.facebookShare.image = image.image
+
+            // MARK: - Twitter configuration
+            socialShare.twitterShare.actionTitle = "Twitter"
+            // Twitter credentials - these fields are mandatory!
+            socialShare.twitterShare.consumerKey = ""
+            socialShare.twitterShare.secretKey = ""
+            // Twitter dummy data
+            socialShare.twitterShare.image = image.image
+
+            // MARK: - Twilio configuration
+            socialShare.smsShare.actionTitle = "SMS"
+            //Twilio credentials all - these fields are mandatory!
+            socialShare.smsShare.twilioSID = ""
+            socialShare.smsShare.twilioToken = ""
+            socialShare.smsShare.fromNumber = ""
+            // Twilio dummy data
+            socialShare.smsShare.image = image.image
+            socialShare.smsShare.message = "Hello!"
+            socialShare.smsShare.link = NSURL(string: "http://google.com")
+            
+            // MARK: -
+            
+            // Display view controller
             try socialShare.showFromViewController(self, sender: sender as! UIControl)
         } catch {
             print("\(error)")
         }
     }
     
-    func didPerformShare() {
-        
+    func willPerformShare(vc: UIViewController, completion: (() -> Void)!) {
+        completion()
+    }
+    
+    func didPerformShare(error: ErrorType?) {
+        if (error != nil) {
+            print("\(error)")
+        } else {
+            print("Did perform share with success!")
+        }
     }
     
 }

@@ -10,12 +10,18 @@ import FBSDKLoginKit
 
 class SocialShareFacebook: SocialShareTool {
     
+    var appID :String?
+    
     override init() {
         super.init()
         
-        machine = SocialShareOutlet.Facebook
-        title = ""
-        composeView = FBComposeViewController()
+        message = ""
+        messagePlaceholder = "Write your message here".localized
+        image = nil
+        actionTitle = "Facebook".localized
+        
+        type = SocialShareOutlet.Facebook
+        composeView = FBComposeViewController(shareTool: self)
     }
     
 }
@@ -24,7 +30,17 @@ class FBComposeViewController: SocialShareComposeViewController {
     
     let permissions: [String] = ["publish_actions"]
     
+    convenience init(shareTool: SocialShareTool) {
+        self.init()
+        self.shareTool = shareTool
+    }
+    
     override func userFinishedPost() {
+        let tool = shareTool as! SocialShareFacebook
+        guard ((tool.appID?.isEmpty) != nil) else {
+            print("Invalid facebook app ID")
+            return
+        }
         
         if (FBSDKAccessToken.currentAccessToken() != nil) {
             createPost()
@@ -53,15 +69,15 @@ class FBComposeViewController: SocialShareComposeViewController {
     func createPost() {
         let parameters: [NSString:NSString] = [
             "caption": "powered_by".localized,
-            "link": SocialShare.sharedInstance.sharedLink!.absoluteString,
-            "name": SocialShare.sharedInstance.sharedLinkTitle!,
-            "picture": SocialShare.sharedInstance.sharedLinkImage!.absoluteString,
+            "link": (shareTool.link?.absoluteString)!,
+            "name": (shareTool.linkTitle)!,
+            "picture": (shareTool.imageLink?.absoluteString)!,
             "message": self.contentText,
             "type": "link"
         ]
         
         FBSDKGraphRequest(graphPath: "me/feed", parameters: parameters, HTTPMethod: "POST").startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result: AnyObject!, error: NSError!) -> Void in
-            SocialShareFacebook().finishedShare(self.rootView)
+            self.shareTool.finishedShare(self.rootView, error: error)
         }
     }
     

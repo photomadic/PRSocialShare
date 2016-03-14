@@ -8,11 +8,11 @@
 
 import UIKit
 import Social
+import ImageIO
 
 public class SocialShareComposeViewController: SLComposeServiceViewController {
     
-    var preview: UIImageView = UIImageView(frame: CGRectMake(0, 0, 100, 100))
-    var shareMessage: String = ""
+    var shareTool: SocialShareTool!
     var rootView: UIViewController = UIViewController()
     
     func userFinishedPost() {
@@ -21,21 +21,18 @@ public class SocialShareComposeViewController: SLComposeServiceViewController {
     
     override public func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        textView.text = shareMessage
+        textView.text = shareTool.message
         validateContent()
     }
     
     override public func loadPreviewView() -> UIView! {
-        preview.contentMode = .ScaleAspectFill
-        preview.clipsToBounds = true
-        preview.image = SocialShare.sharedInstance.sharedPreview
-        
-        preview.layer.borderWidth = 1
-        preview.layer.borderColor = UIColor.grayColor().CGColor
-        
-        preview.removeConstraints(preview.constraints)
-        
-        return preview
+        let image = shareTool.image
+        if image != nil {
+            let previewImageView = UIImageView(image: imageThumbnail(image!, size: CGSizeMake(100, 100)))
+            previewImageView.contentMode = .ScaleAspectFill
+            return previewImageView
+        }
+        return nil
     }
     
     override public func didSelectCancel() {
@@ -44,6 +41,14 @@ public class SocialShareComposeViewController: SLComposeServiceViewController {
     
     override public func didSelectPost() {
         self.navigationController?.dismissViewControllerAnimated(true, completion: userFinishedPost)
+    }
+    
+    private func imageThumbnail(image: UIImage, size: CGSize) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+        image.drawInRect(CGRect(origin: CGPointZero, size: size))
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return scaledImage
     }
     
 }

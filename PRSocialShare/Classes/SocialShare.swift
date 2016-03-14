@@ -11,12 +11,9 @@
 import FBSDKLoginKit
 import TwitterKit
 
-@objc public protocol SocialShareDelegate {
-    
-    func didPerformShare()
-    
-    optional func willPerformShare(vc: UIViewController, completion: (() -> Void)!)
-    optional func shareShouldContinue() -> Bool
+public protocol SocialShareDelegate {
+    func willPerformShare(vc: UIViewController, completion: (() -> Void)!)
+    func didPerformShare(error: ErrorType?)
 }
 
 public enum SocialShareError: ErrorType {
@@ -44,14 +41,6 @@ public class SocialShare: NSObject, SocialShareToolDelegate {
     public static let sharedInstance = SocialShare()
     
     public var delegate: SocialShareDelegate?
-    public var sharedLink: NSURL?
-    public var sharedLinkTitle: String?
-    public var sharedLinkImage: NSURL?
-    public var sharedImage: UIImage?
-    public var sharedPreview: UIImage?
-    public var sharedMessage: [NSString: NSString]?
-    public var shareGroup: NSMutableDictionary = NSMutableDictionary()
-    
     public var title: String?
     
     convenience init(outlets: [SocialShareOutlet]) throws {
@@ -141,7 +130,7 @@ public class SocialShare: NSObject, SocialShareToolDelegate {
         
         // Build the share menu from all available social outlets.
         for outlet: SocialShareTool in options {
-            let action = UIAlertAction(title: outlet.title, style: .Default, handler: { (UIAlertAction) in
+            let action = UIAlertAction(title: outlet.actionTitle, style: .Default, handler: { (UIAlertAction) in
                 self.initiateShare(vc, outlet: outlet)
             })
             alertViewController.addAction(action)
@@ -150,9 +139,11 @@ public class SocialShare: NSObject, SocialShareToolDelegate {
         return alertViewController
     }
     
+    public func didPerformShare(error: ErrorType?) {
+        delegate?.didPerformShare(error)
+    }
+    
     public func destroySession() {
-        shareGroup.removeAllObjects()
-        
         FBSDKLoginManager().logOut()
         
         if (Twitter.sharedInstance().sessionStore.session() != nil) {
@@ -161,10 +152,6 @@ public class SocialShare: NSObject, SocialShareToolDelegate {
         }
         
         NSNotificationCenter.defaultCenter().postNotificationName("SocialShareSessionChange", object: nil)
-    }
-    
-    public func didPerformShare() {
-        delegate?.didPerformShare()
     }
     
 }

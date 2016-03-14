@@ -8,11 +8,25 @@
 
 import UIKit
 
+enum SocialShareSMSError: ErrorType {
+    case InvalidUserInput
+    case InvalidSharedLink
+    case InvalidFromNumber
+    case InvalidResponse(response: NSHTTPURLResponse)
+}
+
 class SocialShareTextDelegate: NSObject, UITextFieldDelegate {
-    ///
-    /// Formats a phone number with proper hyphens and area code enclosure.
-    /// Credit: http://stackoverflow.com/a/26600259
-    ///
+
+    /**
+    Formats a phone number with proper hyphens and area code enclosure.
+    Credit: http://stackoverflow.com/a/26600259
+    
+    - parameter textField: Input textfield
+    - parameter range:     Characters range to be changed
+    - parameter string:    String to replace with
+    
+    - returns:
+    */
     func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
         let newString = (textField.text! as NSString).stringByReplacingCharactersInRange(range, withString: string)
         let components = newString.componentsSeparatedByCharactersInSet(NSCharacterSet.decimalDigitCharacterSet().invertedSet)
@@ -50,35 +64,35 @@ class SocialShareTextDelegate: NSObject, UITextFieldDelegate {
     }
 }
 
-enum SocialShareSMSError: ErrorType {
-    case InvalidUserInput
-    case InvalidSharedLink
-}
-
 class SocialShareSMS: SocialShareTool {
     
     var twilioSID :String!
     var twilioToken :String!
     var fromNumber :String!
+    var alertMessageTitle :String = "Phone number".localized
+    var alertMessageBody :String = "Please insert the phone number".localized
     
     override init() {
         super.init()
-        
-        machine = SocialShareOutlet.SMS
-        title = ""
+        type = SocialShareOutlet.SMS
     }
     
     override func shareFromView(view: UIViewController) {
-        let alert = UIAlertController(title: "where_to_send".localized, message: "sms_gallery".localized, preferredStyle: .Alert)
+        let alert = UIAlertController(title: alertMessageTitle.localized, message: alertMessageBody.localized, preferredStyle: .Alert)
         
         alert.addAction(UIAlertAction(title: "Send".localized, style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             do {
-                let request = try self.buildTwilioRequest(alert.textFields![0].text!)
+                let request = try self.buildTwilioRequest(alert.textFields![0].text!, message: self.message, sharedLink: self.link?.absoluteString)
                 NSURLSession.sharedSession().dataTaskWithRequest(request!, completionHandler: { (data, response, error) in
-                    self.finishedShare(view)
+                    let urlResponse :NSHTTPURLResponse = response as! NSHTTPURLResponse
+                    if error == nil && urlResponse.statusCode != 200 {
+                        self.finishedShare(view, error: SocialShareSMSError.InvalidResponse(response: urlResponse))
+                    } else {
+                        self.finishedShare(view, error: error)
+                    }
                 }).resume()
             } catch {
-                self.finishedShare(view)
+                self.finishedShare(view, error: error)
             }
             
         }))
@@ -92,19 +106,20 @@ class SocialShareSMS: SocialShareTool {
         view.presentViewController(alert, animated: true, completion: nil)
     }
     
-    func buildTwilioRequest(phone: String) throws -> NSMutableURLRequest? {
-        let userInput = SocialShare.sharedInstance.sharedMessage?["sms"]
-        guard userInput != nil else {
+    func buildTwilioRequest(phone: String, message: String?, sharedLink: String?) throws -> NSMutableURLRequest? {
+        guard message != nil else {
             throw SocialShareSMSError.InvalidUserInput
         }
         
-        let sharedLink = SocialShare.sharedInstance.sharedLink
-        
-        guard userInput != nil && sharedLink != nil else {
+        guard sharedLink != nil else {
             throw SocialShareSMSError.InvalidSharedLink
         }
         
-        let message = "\(userInput) \(SocialShare.sharedInstance.sharedLink)"
+        guard fromNumber != nil else {
+            throw SocialShareSMSError.InvalidFromNumber
+        }
+        
+        let message = "\(message) \(sharedLink)"
         
         let request = NSMutableURLRequest(URL: NSURL(string: "https://\(twilioSID):\(twilioToken)@api.twilio.com/2010-04-01/Accounts/\(twilioSID)/SMS/Messages")!)
         request.HTTPMethod = "POST"

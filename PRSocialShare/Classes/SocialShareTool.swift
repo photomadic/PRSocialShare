@@ -9,13 +9,20 @@
 import UIKit
 
 public protocol SocialShareToolDelegate {
-    func didPerformShare()
+    func didPerformShare(error: ErrorType?)
 }
 
 public class SocialShareTool: NSObject {
     
-    var title: String?
-    var machine: SocialShareOutlet?
+    var link: NSURL?
+    var linkTitle: String?
+    var message: String?
+    var messagePlaceholder: String?
+    var image: UIImage?
+    var imageLink: NSURL?
+    
+    var actionTitle: String?
+    var type: SocialShareOutlet?
     var validateRegex: String?
     var composeView: SocialShareComposeViewController?
     var delegate: SocialShareToolDelegate?
@@ -23,11 +30,12 @@ public class SocialShareTool: NSObject {
     
     override init() {
         super.init()
+        
         guard composeView != nil else {
             return
         }
         
-        composeView!.title = title
+        composeView?.shareTool = self
         
 //        if (SocialShare.sharedInstance.sharedMessage != nil && SocialShare.sharedInstance.sharedMessage![machine!] != nil) {
 //            composeView!.shareMessage = SocialShare.sharedInstance.sharedMessage![machine] as! String
@@ -49,14 +57,13 @@ public class SocialShareTool: NSObject {
         }
         
         composeView!.rootView = view
-        composeView!.placeholder = "share_placeholder".localized
-        
+        composeView!.placeholder = messagePlaceholder        
         composeView!.modalPresentationStyle = .OverCurrentContext;
         view.presentViewController(composeView!, animated: true, completion: nil)
     }
     
-    func finishedShare(view: UIViewController) {
-        delegate?.didPerformShare()
+    func finishedShare(view: UIViewController, error: ErrorType?) {
+        delegate?.didPerformShare(error)
     }
     
 }
