@@ -9,7 +9,15 @@
 import UIKit
 
 extension UIAlertController {
-    
+
+    /**
+     To present a view controller with auto-dismiss functionality by selecting a pre-selected alert option
+     
+     - parameter title:              Alert action title
+     - parameter view:               Parent view controller
+     - parameter autoselectInterval: Auto-dismiss interval
+     - parameter handler:            Handler to be called when auto-dismiss is trigger
+     */
     public func showWithAutoselect(title: String, view: UIViewController, autoselectInterval: UInt64, handler: ((UIAlertAction) -> Void)?) {
         self.addAction(UIAlertAction(title:title, style: .Default, handler: handler))
         

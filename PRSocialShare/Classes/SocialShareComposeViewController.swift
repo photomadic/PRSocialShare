@@ -15,6 +15,11 @@ public class SocialShareComposeViewController: SLComposeServiceViewController {
     var shareTool: SocialShareTool!
     var rootView: UIViewController = UIViewController()
     
+    public convenience init(shareTool: SocialShareTool) {
+        self.init()
+        self.shareTool = shareTool
+    }
+    
     func userFinishedPost() {
         return
     }
@@ -22,17 +27,8 @@ public class SocialShareComposeViewController: SLComposeServiceViewController {
     override public func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         textView.text = shareTool.message
+        placeholder = shareTool.messagePlaceholder
         validateContent()
-    }
-    
-    override public func loadPreviewView() -> UIView! {
-        let image = shareTool.image
-        if image != nil {
-            let previewImageView = UIImageView(image: imageThumbnail(image!, size: CGSizeMake(100, 100)))
-            previewImageView.contentMode = .ScaleAspectFill
-            return previewImageView
-        }
-        return nil
     }
     
     override public func didSelectCancel() {
@@ -43,7 +39,7 @@ public class SocialShareComposeViewController: SLComposeServiceViewController {
         self.navigationController?.dismissViewControllerAnimated(true, completion: userFinishedPost)
     }
     
-    private func imageThumbnail(image: UIImage, size: CGSize) -> UIImage {
+    func imageThumbnail(image: UIImage, size: CGSize) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
         image.drawInRect(CGRect(origin: CGPointZero, size: size))
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()

@@ -16,5 +16,5 @@ Pod::Spec.new do |s|
   s.dependency "FBSDKShareKit", "~> 4.9.1"
   s.dependency "TwitterKit"
 
-  s.source_files = "Classes/*.{swift}"
+  s.source_files = "PRSocialShare/Classes/*.{swift}"
 end

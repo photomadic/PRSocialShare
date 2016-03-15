@@ -13,68 +13,74 @@ import TwitterKit
 
 public protocol SocialShareDelegate {
     func willPerformShare(vc: UIViewController, completion: (() -> Void)!)
-    func didPerformShare(error: ErrorType?)
 }
 
 public enum SocialShareError: ErrorType {
     case NoAvailableOutlets
 }
 
-public enum SocialShareOutlet: String {
-    case Facebook
-    case SMS
-    case Twitter
-    case Email
-    
-    static let allValues = [Facebook, SMS, Twitter, Email]
-}
-
-public class SocialShare: NSObject, SocialShareToolDelegate {
-    
-    private(set) var facebookShare: SocialShareFacebook!
-    private(set) var smsShare: SocialShareSMS!
-    private(set) var twitterShare: SocialShareTwitter!
+public class SocialShare: NSObject {
     
     private var availableOutlets :[SocialShareTool]!
+
+    public var facebookShare: SocialShareFacebook? {
+        willSet {
+            if facebookShare != nil {
+                availableOutlets.removeObject(facebookShare!)
+            }
+        }
+        didSet {
+            if facebookShare != nil {
+                availableOutlets.append(facebookShare!)
+            }
+        }
+    }
     
-    /// Allows the social share object to be accessed as a global singleton.
-    public static let sharedInstance = SocialShare()
+    public var smsShare: SocialShareSMS? {
+        willSet {
+            if smsShare != nil {
+                availableOutlets.removeObject(smsShare!)
+            }
+        }
+        didSet {
+            if smsShare != nil {
+                availableOutlets.append(smsShare!)
+            }
+        }
+    }
+    
+    public var twitterShare: SocialShareTwitter? {
+        willSet {
+            if twitterShare != nil {
+                availableOutlets.removeObject(twitterShare!)
+            }
+        }
+        didSet {
+            if twitterShare != nil {
+                availableOutlets.append(twitterShare!)
+            }
+        }
+    }
+
+    public var emailShare: SocialShareEmail? {
+        willSet {
+            if emailShare != nil {
+                availableOutlets.removeObject(emailShare!)
+            }
+        }
+        didSet {
+            if emailShare != nil {
+                availableOutlets.append(emailShare!)
+            }
+        }
+    }
     
     public var delegate: SocialShareDelegate?
     public var title: String?
     
-    convenience init(outlets: [SocialShareOutlet]) throws {
-        self.init()
-        
-        guard outlets.count > 0 else {
-            throw SocialShareError.NoAvailableOutlets
-        }
-        
-        availableOutlets = []
-        
-        if outlets.contains(SocialShareOutlet.Facebook) {
-            facebookShare = SocialShareFacebook()
-            facebookShare.delegate = self
-            availableOutlets.append(facebookShare)
-        }
-        
-        if outlets.contains(SocialShareOutlet.SMS) {
-            smsShare = SocialShareSMS()
-            smsShare.delegate = self
-            availableOutlets.append(smsShare)
-        }
-        
-        if outlets.contains(SocialShareOutlet.Twitter) {
-            twitterShare = SocialShareTwitter()
-            twitterShare.delegate = self
-            availableOutlets.append(twitterShare)
-        }
-    }
-    
     override init() {
         super.init()
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "destroySession", name:"SocialShareSessionDestroy", object: nil)
+        availableOutlets = []
     }
     
     public func showFromViewController(vc: UIViewController, sender: UIControl) throws {
@@ -139,19 +145,9 @@ public class SocialShare: NSObject, SocialShareToolDelegate {
         return alertViewController
     }
     
-    public func didPerformShare(error: ErrorType?) {
-        delegate?.didPerformShare(error)
-    }
-    
     public func destroySession() {
         FBSDKLoginManager().logOut()
-        
-        if (Twitter.sharedInstance().sessionStore.session() != nil) {
-            let uid = Twitter.sharedInstance().sessionStore.session()!.userID
-            Twitter.sharedInstance().sessionStore.logOutUserID(uid)
-        }
-        
-        NSNotificationCenter.defaultCenter().postNotificationName("SocialShareSessionChange", object: nil)
+        twitterShare?.destroySession()
     }
     
 }

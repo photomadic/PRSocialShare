@@ -8,9 +8,27 @@
 
 import FBSDKLoginKit
 
-class SocialShareFacebook: SocialShareTool {
+public enum SocialShareFacebookError: ErrorType {
+    case InvalidAppID
+}
+
+public class SocialShareFacebook: SocialShareTool {
     
-    var appID :String?
+    private var appID :String?
+    var linkTitle: String?
+    var image: UIImage?
+    var imageLink: NSURL?
+    
+    convenience init(appID :String) throws {
+        self.init()
+        
+        guard !appID.isEmpty else {
+            throw SocialShareFacebookError.InvalidAppID
+        }
+        
+        self.appID = appID
+        FBSDKSettings.setAppID(self.appID)
+    }
     
     override init() {
         super.init()
@@ -19,8 +37,7 @@ class SocialShareFacebook: SocialShareTool {
         messagePlaceholder = "Write your message here".localized
         image = nil
         actionTitle = "Facebook".localized
-        
-        type = SocialShareOutlet.Facebook
+        type = SocialShareType.Facebook
         composeView = FBComposeViewController(shareTool: self)
     }
     
@@ -29,19 +46,13 @@ class SocialShareFacebook: SocialShareTool {
 class FBComposeViewController: SocialShareComposeViewController {
     
     let permissions: [String] = ["publish_actions"]
-    
-    convenience init(shareTool: SocialShareTool) {
-        self.init()
-        self.shareTool = shareTool
+    var tool :SocialShareFacebook {
+        get {
+            return self.shareTool as! SocialShareFacebook
+        }
     }
     
     override func userFinishedPost() {
-        let tool = shareTool as! SocialShareFacebook
-        guard ((tool.appID?.isEmpty) != nil) else {
-            print("Invalid facebook app ID")
-            return
-        }
-        
         if (FBSDKAccessToken.currentAccessToken() != nil) {
             createPost()
             return
@@ -50,6 +61,16 @@ class FBComposeViewController: SocialShareComposeViewController {
         let fblogin = FBSDKLoginManager()
         fblogin.loginBehavior = .Web
         fblogin.logInWithPublishPermissions(permissions, fromViewController: self.presentingViewController, handler: userFinishedAuth)
+    }
+    
+    override func loadPreviewView() -> UIView! {
+        let image = tool.image
+        if image != nil {
+            let previewImageView = UIImageView(image: imageThumbnail(image!, size: CGSizeMake(100, 100)))
+            previewImageView.contentMode = .ScaleAspectFill
+            return previewImageView
+        }
+        return nil
     }
     
     func userFinishedAuth(result: FBSDKLoginManagerLoginResult!, error: NSError!) {
@@ -69,15 +90,15 @@ class FBComposeViewController: SocialShareComposeViewController {
     func createPost() {
         let parameters: [NSString:NSString] = [
             "caption": "powered_by".localized,
-            "link": (shareTool.link?.absoluteString)!,
-            "name": (shareTool.linkTitle)!,
-            "picture": (shareTool.imageLink?.absoluteString)!,
+            "link": (tool.link?.absoluteString)!,
+            "name": (tool.linkTitle)!,
+            "picture": (tool.imageLink?.absoluteString)!,
             "message": self.contentText,
             "type": "link"
         ]
         
         FBSDKGraphRequest(graphPath: "me/feed", parameters: parameters, HTTPMethod: "POST").startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result: AnyObject!, error: NSError!) -> Void in
-            self.shareTool.finishedShare(self.rootView, error: error)
+            self.tool.finishedShare(self.rootView, error: error)
         }
     }
     

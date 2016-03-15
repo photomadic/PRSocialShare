@@ -9,7 +9,8 @@
 import Foundation
 
 extension String {
+    /// Property to make localization simpler
     var localized: String {
-        return NSLocalizedString(self, comment: "")
+        return NSLocalizedString(self, comment: self)
     }
 }

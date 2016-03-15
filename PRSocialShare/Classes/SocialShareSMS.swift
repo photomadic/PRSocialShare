@@ -8,10 +8,12 @@
 
 import UIKit
 
-enum SocialShareSMSError: ErrorType {
+public enum SocialShareSMSError: ErrorType {
     case InvalidUserInput
     case InvalidSharedLink
     case InvalidFromNumber
+    case InvalidSID
+    case InvalidToken
     case InvalidResponse(response: NSHTTPURLResponse)
 }
 
@@ -64,17 +66,38 @@ class SocialShareTextDelegate: NSObject, UITextFieldDelegate {
     }
 }
 
-class SocialShareSMS: SocialShareTool {
+public class SocialShareSMS: SocialShareTool {
     
-    var twilioSID :String!
-    var twilioToken :String!
-    var fromNumber :String!
+    private var twilioSID :String?
+    private var twilioToken :String?
+    private var fromNumber :String?
+    
     var alertMessageTitle :String = "Phone number".localized
     var alertMessageBody :String = "Please insert the phone number".localized
     
+    convenience init(fromNumber: String, twilioSID: String, twilioToken: String) throws {
+        self.init()
+        
+        guard !fromNumber.isEmpty else {
+            throw SocialShareSMSError.InvalidFromNumber
+        }
+        
+        guard !twilioSID.isEmpty else {
+            throw SocialShareSMSError.InvalidSID
+        }
+        
+        guard !twilioToken.isEmpty else {
+            throw SocialShareSMSError.InvalidToken
+        }
+        
+        self.fromNumber = fromNumber        
+        self.twilioSID = twilioSID
+        self.twilioToken = twilioToken
+    }
+    
     override init() {
         super.init()
-        type = SocialShareOutlet.SMS
+        type = SocialShareType.SMS
     }
     
     override func shareFromView(view: UIViewController) {
