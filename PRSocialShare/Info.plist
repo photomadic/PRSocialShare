@@ -15,7 +15,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.3.0</string>
+	<string>0.3.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -51,6 +51,21 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>SocialShareTool</key>
+	<dict>
+		<key>FacebookAppID</key>
+		<string>1474925072815711</string>
+		<key>TwilioNumber</key>
+		<string>2149602422</string>
+		<key>TwilioSID</key>
+		<string>AC229b52d7c0aa38f6da31baa00818955a</string>
+		<key>TwilioToken</key>
+		<string>3a5e14a31c500df22e360e6c221b5989</string>
+		<key>TwitterConsumer</key>
+		<string>lUH0FTx8J4zIAhGHdXx1PZLQu</string>
+		<key>TwitterSecret</key>
+		<string>LrpSJf3UsUh2viF7M95P1haEcdWZydSJNtJGw8S9iqQBW352up</string>
+	</dict>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -72,20 +87,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>SocialShareTool</key>
-	<dict>
-		<key>FacebookAppID</key>
-		<string>1474925072815711</string>
-		<key>TwilioNumber</key>
-		<string>2149602422</string>
-		<key>TwilioSID</key>
-		<string>AC229b52d7c0aa38f6da31baa00818955a</string>
-		<key>TwilioToken</key>
-		<string>3a5e14a31c500df22e360e6c221b5989</string>
-		<key>TwitterConsumer</key>
-		<string>lUH0FTx8J4zIAhGHdXx1PZLQu</string>
-		<key>TwitterSecret</key>
-		<string>LrpSJf3UsUh2viF7M95P1haEcdWZydSJNtJGw8S9iqQBW352up</string>
-	</dict>
 </dict>
 </plist>
