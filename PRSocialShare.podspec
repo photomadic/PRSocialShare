@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name             = "PRSocialShare"
   s.summary          = "Social sharing workflow for users on shared devices such as kiosks"
-  s.version          = "0.3.0"
+  s.version          = "v0.3.0"
 
   s.homepage         = "https://github.com/praxent/PRSocialShare"
   s.license          = "MIT"
