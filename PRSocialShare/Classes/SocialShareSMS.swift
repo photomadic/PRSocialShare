@@ -75,29 +75,18 @@ public class SocialShareSMS: SocialShareTool {
     var alertMessageTitle :String = "Phone number".localized
     var alertMessageBody :String = "Please insert the phone number".localized
     
-    convenience init(fromNumber: String, twilioSID: String, twilioToken: String) throws {
-        self.init()
-        
-        guard !fromNumber.isEmpty else {
-            throw SocialShareSMSError.InvalidFromNumber
-        }
-        
-        guard !twilioSID.isEmpty else {
-            throw SocialShareSMSError.InvalidSID
-        }
-        
-        guard !twilioToken.isEmpty else {
-            throw SocialShareSMSError.InvalidToken
-        }
-        
-        self.fromNumber = fromNumber        
-        self.twilioSID = twilioSID
-        self.twilioToken = twilioToken
-    }
-    
     override init() {
         super.init()
         type = SocialShareType.SMS
+        
+        fromNumber = getValueFromPlist("TwilioNumber")
+        assert(fromNumber != nil && !fromNumber!.isEmpty, "Info.plist should have a dictionary SocialShareTool with a key/value TwilioNumber and should not be a empty string")
+        
+        twilioSID = getValueFromPlist("TwilioSID")
+        assert(twilioSID != nil && !twilioSID!.isEmpty, "Info.plist should have a dictionary SocialShareTool with a key/value TwilioSID and should not be a empty string")
+        
+        twilioToken = getValueFromPlist("TwilioToken")
+        assert(twilioToken != nil && !twilioToken!.isEmpty, "Info.plist should have a dictionary SocialShareTool with a key/value TwilioToken and should not be a empty string")
     }
     
     override func shareFromView(view: UIViewController) {

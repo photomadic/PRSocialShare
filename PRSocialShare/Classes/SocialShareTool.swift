@@ -49,6 +49,8 @@ public class SocialShareTool: NSObject {
     var composeView: SocialShareComposeViewController?
     /// Delegate to be called as soon as share is finished
     var delegate: SocialShareToolDelegate?
+    /// Dictionary on Info.plist with social share tools settings
+    private var settings: [String: String]?
     
     override init() {
         super.init()
@@ -89,6 +91,20 @@ public class SocialShareTool: NSObject {
         composeView!.rootView = view
         composeView!.modalPresentationStyle = .OverCurrentContext;
         view.presentViewController(composeView!, animated: true, completion: nil)
+    }
+    
+    /**
+     To get settings values from info.plist
+     
+     - parameter key: setting key to retrieve the value
+     */
+    func getValueFromPlist(key: String) -> String? {
+        if settings == nil {
+            let infoData = NSDictionary(contentsOfFile: NSBundle.mainBundle().pathForResource("Info", ofType: "plist")!) as! [String: AnyObject]
+            settings = infoData["SocialShareTool"] as? [String: String]
+        }
+        
+        return settings?[key]
     }
     
     // #MARK: - SocialShareToolDelegate

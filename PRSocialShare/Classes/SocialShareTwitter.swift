@@ -11,55 +11,39 @@ import TwitterKit
 /**
  Twitter social share errors
  
- - InvalidConsumerKey:      Thrown when Twitter consumer key is invalid
- - InvalidSecretKey:        Thrown when Twitter secret key is invalid
  - UserMustBeAuthenticated: Thrown when posting is executed while user is not authenticated
  */
 public enum SocialShareTwitterError: ErrorType {
-    case InvalidConsumerKey
-    case InvalidSecretKey
     case UserMustBeAuthenticated
 }
 
 /// Twiiter social share tool
 public class SocialShareTwitter: SocialShareTool {
     
-    /// Twiiter consumer key (can be found under specific app at https://apps.twitter.com)
-    private var consumerKey :String?
-    /// Twiiter secret key (can be found under specific app at https://apps.twitter.com)
-    private var secretKey :String?
     /// Image to be shared
     var image: UIImage?
     /// Image link to be shared
     var imageLink: NSURL?
     
+    
     /**
-     Convenience initializer to be used with Twitter consumer and secret keys
+     Initialize with consumer and secret Twitter keys.
+     Twitter keys can be found under specific app at https://apps.twitter.com
      
-     - parameter consumerKey: Twitter consumer key (can be found under specific app at https://apps.twitter.com)
-     - parameter secretKey:   Twitter secret key (can be found under specific app at https://apps.twitter.com)
-     
-     - throws: Throws InvalidConsumerKey or InvalidSecretKey
-     
-     - returns: SocialShareTwitter with Twitter singleton initialized
+     - returns: Tool with Twitter singleton initialized
      */
-    convenience init(consumerKey: String, secretKey: String) throws {
-        self.init()
-        
-        guard !consumerKey.isEmpty else {
-            throw SocialShareTwitterError.InvalidConsumerKey
-        }
-        
-        guard !secretKey.isEmpty else {
-            throw SocialShareTwitterError.InvalidSecretKey
-        }
+    override init() {
+        super.init()
      
         type = SocialShareType.Twitter
         
-        self.consumerKey = consumerKey
-        self.secretKey = secretKey
+        let consumerKey = getValueFromPlist("TwitterConsumer")
+        assert(consumerKey != nil && !consumerKey!.isEmpty, "Info.plist should have a dictionary SocialShareTool with a key/value TwitterConsumer and should not be a empty string")
         
-        Twitter.sharedInstance().startWithConsumerKey(self.consumerKey!, consumerSecret: self.secretKey!)
+        let secretKey = getValueFromPlist("TwitterSecret")
+        assert(secretKey != nil && !secretKey!.isEmpty, "Info.plist should have a dictionary SocialShareTool with a key/value TwitterSecret and should not be a empty string")
+        
+        Twitter.sharedInstance().startWithConsumerKey(consumerKey!, consumerSecret: secretKey!)
         composeView = TwitterComposeViewController(shareTool: self)
     }
     

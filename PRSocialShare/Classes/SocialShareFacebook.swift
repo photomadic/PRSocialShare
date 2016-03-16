@@ -14,24 +14,16 @@ public enum SocialShareFacebookError: ErrorType {
 
 public class SocialShareFacebook: SocialShareTool {
     
-    private var appID :String?
     var linkTitle: String?
     var image: UIImage?
     var imageLink: NSURL?
     
-    convenience init(appID :String) throws {
-        self.init()
-        
-        guard !appID.isEmpty else {
-            throw SocialShareFacebookError.InvalidAppID
-        }
-        
-        self.appID = appID
-        FBSDKSettings.setAppID(self.appID)
-    }
-    
     override init() {
         super.init()
+        
+        let appID = getValueFromPlist("FacebookAppID")
+        assert(appID != nil && !appID!.isEmpty, "Info.plist should have a dictionary SocialShareTool with a key/value FacebookAppID and should not be a empty string")
+        FBSDKSettings.setAppID(appID)
         
         message = ""
         messagePlaceholder = "Write your message here".localized
