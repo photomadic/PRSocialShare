@@ -8,21 +8,41 @@
 
 import TwitterKit
 
+/**
+ Twitter social share errors
+ 
+ - InvalidConsumerKey:      Thrown when Twitter consumer key is invalid
+ - InvalidSecretKey:        Thrown when Twitter secret key is invalid
+ - UserMustBeAuthenticated: Thrown when posting is executed while user is not authenticated
+ */
 public enum SocialShareTwitterError: ErrorType {
     case InvalidConsumerKey
     case InvalidSecretKey
     case UserMustBeAuthenticated
-    case InvalidContructor
 }
 
+/// Twiiter social share tool
 public class SocialShareTwitter: SocialShareTool {
     
+    /// Twiiter consumer key (can be found under specific app at https://apps.twitter.com)
     private var consumerKey :String?
+    /// Twiiter secret key (can be found under specific app at https://apps.twitter.com)
     private var secretKey :String?
-    
+    /// Image to be shared
     var image: UIImage?
+    /// Image link to be shared
     var imageLink: NSURL?
     
+    /**
+     Convenience initializer to be used with Twitter consumer and secret keys
+     
+     - parameter consumerKey: Twitter consumer key (can be found under specific app at https://apps.twitter.com)
+     - parameter secretKey:   Twitter secret key (can be found under specific app at https://apps.twitter.com)
+     
+     - throws: Throws InvalidConsumerKey or InvalidSecretKey
+     
+     - returns: SocialShareTwitter with Twitter singleton initialized
+     */
     convenience init(consumerKey: String, secretKey: String) throws {
         self.init()
         
@@ -53,12 +73,15 @@ public class SocialShareTwitter: SocialShareTool {
     
 }
 
+/// Twitter social share composer view controller
 class TwitterComposeViewController: SocialShareComposeViewController {
     
-    let uploadEndpoint = "https://upload.twitter.com/1.1/media/upload.json"
-    let updateEndpoint = "https://api.twitter.com/1.1/statuses/update.json"
-    
-    var tool :SocialShareTwitter {
+    /// Twitter media upload endpoint
+    private let uploadEndpoint = "https://upload.twitter.com/1.1/media/upload.json"
+    /// Twitter status endpoint
+    private let updateEndpoint = "https://api.twitter.com/1.1/statuses/update.json"
+    /// Twitter social share tool as convenience property
+    private var tool :SocialShareTwitter {
         get {
             return self.shareTool as! SocialShareTwitter
         }
@@ -104,6 +127,21 @@ class TwitterComposeViewController: SocialShareComposeViewController {
         return nil
     }
     
+    /**
+     Upload image to Twitter before use it on a post.
+     
+     *WARNING*
+     
+     There is a problem with current library/API and is not possible to upload any media
+     * https://dev.twitter.com/overview/api/response-codes
+     * http://stackoverflow.com/questions/31259869/share-video-on-twitter-with-fabric-api-without-composer-ios
+     * https://dev.twitter.com/rest/public/uploading-media
+     
+     As specified on documentation and forums, it is necessary to set Content-Type to multipart/form-data but it is not working either:
+     
+     uploadRequest.setValue("multipart/form-data", forHTTPHeaderField: "Content-Type")
+     
+     */
     func uploadMedia() {
         if (Twitter.sharedInstance().sessionStore.session() == nil) {
             self.tool.finishedShare(self.rootView, error: SocialShareTwitterError.UserMustBeAuthenticated)
@@ -114,29 +152,31 @@ class TwitterComposeViewController: SocialShareComposeViewController {
 
         let imageData = UIImageJPEGRepresentation((tool.image)!, 0.8)!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
         let mediaParams = ["media_data": imageData]
-        let uploadRequest = client.URLRequestWithMethod("POST", URL: uploadEndpoint, parameters: mediaParams, error: nil)
+        let uploadRequest: NSMutableURLRequest = client.URLRequestWithMethod("POST", URL: uploadEndpoint, parameters: mediaParams, error: nil) as! NSMutableURLRequest
         
         client.sendTwitterRequest(uploadRequest) { (response, data, error) -> Void in
-            self.postStatus(data)
+            var mediaId: String?
+            if (data != nil) {
+                do {
+                    let media = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
+                    mediaId = media.objectForKey("media_id") as? String
+                }
+                catch {}
+            }
+            self.postStatus(mediaId)
         }
     }
     
-    func postStatus(data: NSData?) {
+    
+    /**
+     To publish after send media to Twitter servers
+     
+     - parameter mediaId: Media identifier to be shared with post. If nil no media will be shared
+     */
+    func postStatus(mediaId: String?) {
         guard Twitter.sharedInstance().sessionStore.session() != nil else {
             tool.finishedShare(self.rootView, error: SocialShareTwitterError.UserMustBeAuthenticated)
             return
-        }
-        
-        var mediaId: String = ""
-        
-        if (data != nil) {
-            do {
-                let media = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
-                mediaId = media.objectForKey("media_id") as! String
-            }
-            catch {
-                tool.finishedShare(self.rootView, error: error)
-            }
         }
         
         guard !self.contentText.isEmpty || tool.imageLink != nil else {
@@ -155,7 +195,7 @@ class TwitterComposeViewController: SocialShareComposeViewController {
         
         var post = ["status": status]
         
-        if (mediaId != "") {
+        if mediaId != nil {
             post["media_ids"] = mediaId
         }
         
