@@ -8,17 +8,28 @@
 
 import UIKit
 
+/**
+ *  Email social share specific protocol
+ */
 public protocol SocialShareEmailDelegate: SocialShareToolDelegate {
     func sendEmail(email: String) throws
 }
 
+/**
+ Email social share errors
+ 
+ - InvalidEmail: Thrown when email is invalid (string does not comply with regular expression)
+ */
 public enum SocialShareEmailError: ErrorType {
     case InvalidEmail
 }
 
+/// Email social share tool
 public class SocialShareEmail: SocialShareTool {
     
+    /// Text to be shown on alert controller title
     var alertTitle: String = "Send email".localized
+    /// Text to be shown on alert controller message
     var alertMessage: String = "Please insert the email address".localized
     
     override init() {

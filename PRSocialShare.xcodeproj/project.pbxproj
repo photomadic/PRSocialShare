@@ -68,7 +68,9 @@
 		11D58210B557D0C9A123EFF8 /* Pods-PRSocialShareUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PRSocialShareUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PRSocialShareUITests/Pods-PRSocialShareUITests.release.xcconfig"; sourceTree = "<group>"; };
 		32E7DB676BC676DDA0D713E1 /* Pods-PRSocialShareTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PRSocialShareTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PRSocialShareTests/Pods-PRSocialShareTests.debug.xcconfig"; sourceTree = "<group>"; };
 		6054247881ACDF1D69684233 /* Pods_PRSocialShareUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PRSocialShareUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6113BCCE278CB78D33E424B3 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		6C6A813D4561B86F02AE9209 /* Pods-PRSocialShare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PRSocialShare.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PRSocialShare/Pods-PRSocialShare.debug.xcconfig"; sourceTree = "<group>"; };
+		74DCF1CF16A66676EF402F3E /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		7D3AACAF1C92E38B005111C0 /* PRSocialShare.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PRSocialShare.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D3AACB21C92E38B005111C0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7D3AACB41C92E38B005111C0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -188,18 +190,34 @@
 		7D3AACEB1C92EFDF005111C0 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				7DE93F501C988C0800E77D69 /* Array+SocialShare.swift */,
-				7DE93F511C988C0800E77D69 /* SocialShareEmail.swift */,
+				7DEF0F391C995DC60008D0BE /* Share tools */,
+				7DEF0F381C995D980008D0BE /* Extensions */,
 				7D3AACEC1C92EFDF005111C0 /* SocialShare.swift */,
+				7D3AAD011C935D68005111C0 /* SocialShareComposeViewController.swift */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		7DEF0F381C995D980008D0BE /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				7D3AAD051C935DF4005111C0 /* UIAlertController+SocialShare.swift */,
+				7D3AAD091C935E2A005111C0 /* String+SocialShare.swift */,
+				7DE93F501C988C0800E77D69 /* Array+SocialShare.swift */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
+		7DEF0F391C995DC60008D0BE /* Share tools */ = {
+			isa = PBXGroup;
+			children = (
+				7DE93F511C988C0800E77D69 /* SocialShareEmail.swift */,
 				7D3AACED1C92EFDF005111C0 /* SocialShareFacebook.swift */,
 				7D3AACEE1C92EFDF005111C0 /* SocialShareSMS.swift */,
 				7D3AACEF1C92EFDF005111C0 /* SocialShareTwitter.swift */,
 				7D3AACFD1C9359AF005111C0 /* SocialShareTool.swift */,
-				7D3AAD011C935D68005111C0 /* SocialShareComposeViewController.swift */,
-				7D3AAD051C935DF4005111C0 /* UIAlertController+SocialShare.swift */,
-				7D3AAD091C935E2A005111C0 /* String+SocialShare.swift */,
 			);
-			path = Classes;
+			name = "Share tools";
 			sourceTree = "<group>";
 		};
 		BA189ECA9CDCC7AC0ADCE21C /* Pods */ = {
@@ -211,6 +229,8 @@
 				D6C2DB705B06CF5CA1C4162A /* Pods-PRSocialShareTests.release.xcconfig */,
 				9A4FCF98A6039A8E7623439B /* Pods-PRSocialShareUITests.debug.xcconfig */,
 				11D58210B557D0C9A123EFF8 /* Pods-PRSocialShareUITests.release.xcconfig */,
+				74DCF1CF16A66676EF402F3E /* Pods.debug.xcconfig */,
+				6113BCCE278CB78D33E424B3 /* Pods.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -704,7 +724,7 @@
 		};
 		7D3AACD81C92E38B005111C0 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6C6A813D4561B86F02AE9209 /* Pods-PRSocialShare.debug.xcconfig */;
+			baseConfigurationReference = 74DCF1CF16A66676EF402F3E /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = PRSocialShare/Info.plist;
@@ -717,7 +737,7 @@
 		};
 		7D3AACD91C92E38B005111C0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D18A684D4F0CDB41A261C0C1 /* Pods-PRSocialShare.release.xcconfig */;
+			baseConfigurationReference = 6113BCCE278CB78D33E424B3 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = PRSocialShare/Info.plist;
@@ -730,7 +750,6 @@
 		};
 		7D3AACDB1C92E38B005111C0 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 32E7DB676BC676DDA0D713E1 /* Pods-PRSocialShareTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = PRSocialShareTests/Info.plist;
@@ -743,7 +762,6 @@
 		};
 		7D3AACDC1C92E38B005111C0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D6C2DB705B06CF5CA1C4162A /* Pods-PRSocialShareTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = PRSocialShareTests/Info.plist;
@@ -756,7 +774,6 @@
 		};
 		7D3AACDE1C92E38B005111C0 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9A4FCF98A6039A8E7623439B /* Pods-PRSocialShareUITests.debug.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = PRSocialShareUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -769,7 +786,6 @@
 		};
 		7D3AACDF1C92E38B005111C0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 11D58210B557D0C9A123EFF8 /* Pods-PRSocialShareUITests.release.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = PRSocialShareUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
