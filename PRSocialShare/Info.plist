@@ -24,10 +24,20 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>Photomadic</string>
+			<string>PRSocialShare</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>fb1474925072815711</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>PRSocialShare</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>pr-social-share</string>
 			</array>
 		</dict>
 	</array>

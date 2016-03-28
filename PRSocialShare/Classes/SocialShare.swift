@@ -9,7 +9,7 @@
 //
 
 import FBSDKLoginKit
-import TwitterKit
+//import TwitterKit
 
 public protocol SocialShareDelegate {
     func willPerformShare(vc: UIViewController, completion: (() -> Void)!)
@@ -147,7 +147,7 @@ public class SocialShare: NSObject {
     
     public func destroySession() {
         FBSDKLoginManager().logOut()
-        twitterShare?.destroySession()
+//        twitterShare?.destroySession()
     }
     
 }

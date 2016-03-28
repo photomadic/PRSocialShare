@@ -12,10 +12,10 @@ Pod::Spec.new do |s|
   s.platform     = :ios, "9.0"
   s.requires_arc = true
 
-  s.dependency "FBSDKCoreKit", "~> 4.10.0"
-  s.dependency "FBSDKLoginKit", "~> 4.10.0"
-  s.dependency "FBSDKShareKit", "~> 4.10.0"
-  s.dependency "TwitterKit", "~> 1.14.6"
+#s.dependency "FBSDKCoreKit", "~> 4.10.0"
+#  s.dependency "FBSDKLoginKit", "~> 4.10.0"
+#  s.dependency "FBSDKShareKit", "~> 4.10.0"
+#  s.dependency "TwitterKit", "~> 1.14.6"
 
   s.source_files = "PRSocialShare/Classes/*.{swift}"
 end

@@ -30,6 +30,9 @@ class ViewController: UIViewController, SocialShareDelegate, SocialShareToolDele
         let imageToShare: UIImage = image.image!
         let imageLink: NSURL = NSURL(string: "https://pixabay.com/static/uploads/photo/2015/10/01/21/39/background-image-967820_960_720.jpg")!
         
+        let fileURL = (NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0]).URLByAppendingPathComponent("image.png", isDirectory: false)
+        try! UIImagePNGRepresentation(UIImage(named: "praxent-agile-scrum-process")!)?.writeToURL(fileURL, options: NSDataWritingOptions.AtomicWrite)
+        
         let socialShare = SocialShare()
         socialShare.delegate = self
         
@@ -45,10 +48,8 @@ class ViewController: UIViewController, SocialShareDelegate, SocialShareToolDele
         // MARK: - Twitter configuration
         
         let twitterShare = SocialShareTwitter()
-        twitterShare.actionTitle = "Twitter"
-        twitterShare.image = imageToShare
-        twitterShare.imageLink = imageLink
-        twitterShare.destroySession()
+        twitterShare.actionTitle = "Twitter"        
+        twitterShare.imageURL = fileURL
         socialShare.twitterShare = twitterShare
         
         

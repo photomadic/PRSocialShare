@@ -5,7 +5,8 @@ use_frameworks!
 pod 'FBSDKCoreKit', '~> 4.10.0'
 pod 'FBSDKLoginKit', '~> 4.10.0'
 pod 'FBSDKShareKit', '~> 4.10.0'
-pod 'TwitterKit', '~> 1.14.6'
+
+pod 'OAuthSwift', '~> 0.5.0'
 
 target 'PRSocialShare' do
 end

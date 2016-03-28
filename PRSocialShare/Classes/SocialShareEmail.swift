@@ -32,6 +32,12 @@ public class SocialShareEmail: SocialShareTool {
     /// Text to be shown on alert controller message
     var alertMessage: String = "Please insert the email address".localized
     
+    var alertText: String = ""
+    
+    var alertSendButtonText: String = "Send".localized
+    
+    public var sendEmail: ((email: String) -> (Void))?
+    
     override init() {
         super.init()
 
@@ -40,8 +46,10 @@ public class SocialShareEmail: SocialShareTool {
     }
     
     override func shareFromView(view: UIViewController) {
+        assert(self.delegate != nil || self.sendEmail != nil, "Delegate or closure must be provided to be able to share email")
+        
         let alert = UIAlertController(title: alertTitle.localized, message: alertMessage.localized, preferredStyle: .Alert)
-        alert.addAction(UIAlertAction(title: "Send".localized, style: .Default, handler: { (action: UIAlertAction!) in
+        alert.addAction(UIAlertAction(title: alertSendButtonText, style: .Default, handler: { (action: UIAlertAction!) in
             
             let email = alert.textFields![0].text!
             if !self.validate(email) {
@@ -50,7 +58,11 @@ public class SocialShareEmail: SocialShareTool {
             }
             
             do {
-                try (self.delegate as! SocialShareEmailDelegate).sendEmail(email)
+                if self.sendEmail != nil {
+                    self.sendEmail!(email: email)
+                } else if self.delegate != nil {
+                    try (self.delegate as! SocialShareEmailDelegate).sendEmail(email)
+                }
                 self.delegate?.didPerformShare(nil)
             } catch {
                 self.delegate?.didPerformShare(error)
@@ -62,6 +74,7 @@ public class SocialShareEmail: SocialShareTool {
         alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
             textField.placeholder = self.messagePlaceholder
             textField.keyboardType = .EmailAddress
+            textField.text = self.alertText
         })
         
         view.presentViewController(alert, animated: true, completion: nil)

@@ -17,19 +17,79 @@ public enum SocialShareSMSError: ErrorType {
     case InvalidResponse(response: NSHTTPURLResponse)
 }
 
-class SocialShareTextDelegate: NSObject, UITextFieldDelegate {
-
-    /**
-    Formats a phone number with proper hyphens and area code enclosure.
-    Credit: http://stackoverflow.com/a/26600259
+public class SocialShareSMS: SocialShareTool, UITextFieldDelegate {
     
-    - parameter textField: Input textfield
-    - parameter range:     Characters range to be changed
-    - parameter string:    String to replace with
+    private var twilioSID :String?
+    private var twilioToken :String?
+    private var fromNumber :String?
     
-    - returns:
-    */
-    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+    var alertMessageTitle :String = "Phone number".localized
+    var alertMessageBody :String = "Please insert the phone number".localized
+    
+    override init() {
+        super.init()
+        type = SocialShareType.SMS
+        
+        fromNumber = getValueFromPlist("TwilioNumber")
+        assert(fromNumber != nil && !fromNumber!.isEmpty, "Info.plist should have a dictionary SocialShareTool with a key/value TwilioNumber and should not be a empty string")
+        
+        twilioSID = getValueFromPlist("TwilioSID")
+        assert(twilioSID != nil && !twilioSID!.isEmpty, "Info.plist should have a dictionary SocialShareTool with a key/value TwilioSID and should not be a empty string")
+        
+        twilioToken = getValueFromPlist("TwilioToken")
+        assert(twilioToken != nil && !twilioToken!.isEmpty, "Info.plist should have a dictionary SocialShareTool with a key/value TwilioToken and should not be a empty string")
+    }
+    
+    override func shareFromView(view: UIViewController) {
+        let alert = UIAlertController(title: alertMessageTitle.localized, message: alertMessageBody.localized, preferredStyle: .Alert)
+        
+        alert.addAction(UIAlertAction(title: "Send".localized, style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            do {
+                let request = try self.buildTwilioRequest(alert.textFields![0].text!, message: self.message)
+                NSURLSession.sharedSession().dataTaskWithRequest(request!, completionHandler: { (data, response, error) in
+                    let urlResponse :NSHTTPURLResponse = response as! NSHTTPURLResponse
+                    if error == nil && urlResponse.statusCode != 200 {
+                        self.finishedShare(view, error: SocialShareSMSError.InvalidResponse(response: urlResponse))
+                    } else {
+                        self.finishedShare(view, error: error)
+                    }
+                }).resume()
+            } catch {
+                self.finishedShare(view, error: error)
+            }
+            
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel".localized, style: UIAlertActionStyle.Cancel, handler: nil))
+        
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+            textField.delegate = self
+            textField.keyboardType = .DecimalPad
+        })
+        
+        view.presentViewController(alert, animated: true, completion: nil)
+    }
+    
+    func buildTwilioRequest(phone: String, message: String?) throws -> NSMutableURLRequest? {
+        guard message != nil else {
+            throw SocialShareSMSError.InvalidUserInput
+        }
+        
+        guard fromNumber != nil else {
+            throw SocialShareSMSError.InvalidFromNumber
+        }
+        
+        let request = NSMutableURLRequest(URL: NSURL(string: "https://\(twilioSID!):\(twilioToken!)@api.twilio.com/2010-04-01/Accounts/\(twilioSID!)/SMS/Messages")!)
+        request.HTTPMethod = "POST"
+        request.HTTPBody = "From=\(fromNumber!)&To=\(phone)&Body=\(message!)".dataUsingEncoding(NSUTF8StringEncoding)
+        
+        return request
+    }
+    
+    ///
+    /// Formats a phone number with proper hyphens and area code enclosure.
+    /// Credit: http://stackoverflow.com/a/26600259
+    ///
+    public func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
         let newString = (textField.text! as NSString).stringByReplacingCharactersInRange(range, withString: string)
         let components = newString.componentsSeparatedByCharactersInSet(NSCharacterSet.decimalDigitCharacterSet().invertedSet)
         
@@ -63,81 +123,6 @@ class SocialShareTextDelegate: NSObject, UITextFieldDelegate {
         formattedString.appendString(remainder)
         textField.text = formattedString as String
         return false
-    }
-}
-
-public class SocialShareSMS: SocialShareTool {
-    
-    private var twilioSID :String?
-    private var twilioToken :String?
-    private var fromNumber :String?
-    
-    var alertMessageTitle :String = "Phone number".localized
-    var alertMessageBody :String = "Please insert the phone number".localized
-    
-    override init() {
-        super.init()
-        type = SocialShareType.SMS
-        
-        fromNumber = getValueFromPlist("TwilioNumber")
-        assert(fromNumber != nil && !fromNumber!.isEmpty, "Info.plist should have a dictionary SocialShareTool with a key/value TwilioNumber and should not be a empty string")
-        
-        twilioSID = getValueFromPlist("TwilioSID")
-        assert(twilioSID != nil && !twilioSID!.isEmpty, "Info.plist should have a dictionary SocialShareTool with a key/value TwilioSID and should not be a empty string")
-        
-        twilioToken = getValueFromPlist("TwilioToken")
-        assert(twilioToken != nil && !twilioToken!.isEmpty, "Info.plist should have a dictionary SocialShareTool with a key/value TwilioToken and should not be a empty string")
-    }
-    
-    override func shareFromView(view: UIViewController) {
-        let alert = UIAlertController(title: alertMessageTitle.localized, message: alertMessageBody.localized, preferredStyle: .Alert)
-        
-        alert.addAction(UIAlertAction(title: "Send".localized, style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
-            do {
-                let request = try self.buildTwilioRequest(alert.textFields![0].text!, message: self.message, sharedLink: self.link?.absoluteString)
-                NSURLSession.sharedSession().dataTaskWithRequest(request!, completionHandler: { (data, response, error) in
-                    let urlResponse :NSHTTPURLResponse = response as! NSHTTPURLResponse
-                    if error == nil && urlResponse.statusCode != 200 {
-                        self.finishedShare(view, error: SocialShareSMSError.InvalidResponse(response: urlResponse))
-                    } else {
-                        self.finishedShare(view, error: error)
-                    }
-                }).resume()
-            } catch {
-                self.finishedShare(view, error: error)
-            }
-            
-        }))
-        alert.addAction(UIAlertAction(title: "Cancel".localized, style: UIAlertActionStyle.Cancel, handler: nil))
-        
-        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
-            textField.delegate = SocialShareTextDelegate()
-            textField.keyboardType = .DecimalPad
-        })
-        
-        view.presentViewController(alert, animated: true, completion: nil)
-    }
-    
-    func buildTwilioRequest(phone: String, message: String?, sharedLink: String?) throws -> NSMutableURLRequest? {
-        guard message != nil else {
-            throw SocialShareSMSError.InvalidUserInput
-        }
-        
-        guard sharedLink != nil else {
-            throw SocialShareSMSError.InvalidSharedLink
-        }
-        
-        guard fromNumber != nil else {
-            throw SocialShareSMSError.InvalidFromNumber
-        }
-        
-        let message = "\(message) \(sharedLink)"
-        
-        let request = NSMutableURLRequest(URL: NSURL(string: "https://\(twilioSID):\(twilioToken)@api.twilio.com/2010-04-01/Accounts/\(twilioSID)/SMS/Messages")!)
-        request.HTTPMethod = "POST"
-        request.HTTPBody = "From=\(fromNumber)&To=\(phone)&Body=\(message)".dataUsingEncoding(NSUTF8StringEncoding)
-        
-        return request
     }
     
 }

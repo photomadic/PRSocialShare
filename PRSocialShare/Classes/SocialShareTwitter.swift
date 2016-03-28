@@ -6,7 +6,8 @@
 //  Copyright © 2016 Praxent. All rights reserved.
 //
 
-import TwitterKit
+//import TwitterKit
+import OAuthSwift
 
 /**
  Twitter social share errors
@@ -19,12 +20,13 @@ public enum SocialShareTwitterError: ErrorType {
 
 /// Twiiter social share tool
 public class SocialShareTwitter: SocialShareTool {
+
+    /// Image local url to be shared
+    var imageURL: NSURL?
     
-    /// Image to be shared
-    var image: UIImage?
-    /// Image link to be shared
-    var imageLink: NSURL?
+    var consumerKey: String!
     
+    var secretKey: String!
     
     /**
      Initialize with consumer and secret Twitter keys.
@@ -37,22 +39,22 @@ public class SocialShareTwitter: SocialShareTool {
      
         type = SocialShareType.Twitter
         
-        let consumerKey = getValueFromPlist("TwitterConsumer")
+        consumerKey = getValueFromPlist("TwitterConsumer")
         assert(consumerKey != nil && !consumerKey!.isEmpty, "Info.plist should have a dictionary SocialShareTool with a key/value TwitterConsumer and should not be a empty string")
         
-        let secretKey = getValueFromPlist("TwitterSecret")
+        secretKey = getValueFromPlist("TwitterSecret")
         assert(secretKey != nil && !secretKey!.isEmpty, "Info.plist should have a dictionary SocialShareTool with a key/value TwitterSecret and should not be a empty string")
         
-        Twitter.sharedInstance().startWithConsumerKey(consumerKey!, consumerSecret: secretKey!)
+        //Twitter.sharedInstance().startWithConsumerKey(consumerKey!, consumerSecret: secretKey!)
         composeView = TwitterComposeViewController(shareTool: self)
     }
     
-    func destroySession() {
-        let store = Twitter.sharedInstance().sessionStore
-        let sessions = store.existingUserSessions()
-        for session in sessions {
-            store.logOutUserID(session.userID)
-        }
+    func logout() {
+//        let store = Twitter.sharedInstance().sessionStore
+//        let sessions = store.existingUserSessions()
+//        for session in sessions {
+//            store.logOutUserID(session.userID)
+//        }
     }
     
 }
@@ -70,6 +72,7 @@ class TwitterComposeViewController: SocialShareComposeViewController {
             return self.shareTool as! SocialShareTwitter
         }
     }
+    private var image: UIImage?
     
     override func isContentValid() -> Bool {
         charactersRemaining = 117 - contentText.characters.count
@@ -86,23 +89,40 @@ class TwitterComposeViewController: SocialShareComposeViewController {
     }
     
     override func userFinishedPost() {
-        if (Twitter.sharedInstance().sessionStore.session() != nil) {
-            self.uploadMedia()
-            return
-        }
+        let oauthswift = OAuth1Swift(
+            consumerKey:    tool.consumerKey,
+            consumerSecret: tool.secretKey,
+            requestTokenUrl: "https://api.twitter.com/oauth/request_token",
+            authorizeUrl:    "https://api.twitter.com/oauth/authorize",
+            accessTokenUrl:  "https://api.twitter.com/oauth/access_token"
+        )
+        oauthswift.authorize_url_handler = SafariURLHandler(viewController: self.rootView)
         
-        Twitter.sharedInstance().logInWithCompletion { (user, error) in
-            if (user == nil || error != nil) {
-                self.shareTool.finishedShare(self.rootView, error: error)
-                return
+        oauthswift.authorizeWithCallbackURL( NSURL(string: "pr-social-share://oauth-callback/twitter")!, success: {credential, response, parameters in
+            var data: String? = nil
+            if self.tool.imageURL != nil {
+                data = NSData(contentsOfURL: self.tool.imageURL!)?.base64EncodedStringWithOptions([NSDataBase64EncodingOptions.EncodingEndLineWithCarriageReturn, NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed])
             }
             
-            self.uploadMedia()
-        }
+            if data == nil {
+                self.updateStatus(oauthswift, mediaIds: nil, success: nil, failure: { error in print(error.localizedDescription) })
+            } else {
+                oauthswift.client.post("https://upload.twitter.com/1.1/media/upload.json", parameters: ["media_data" : data!], headers: ["Content-Type": "image/png"], success: { (data, response) in
+                    
+                    let JSON = try! NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers)
+                    let mediaId = JSON["media_id_string"] as! String
+                    self.updateStatus(oauthswift, mediaIds: mediaId, success: nil, failure: { error in print(error.localizedDescription) })
+                    
+                    }, failure: { error in print(error.localizedDescription) })
+            }
+            }, failure: { error in print(error.localizedDescription) })
     }
     
     override func loadPreviewView() -> UIView! {
-        let image = tool.image
+        if image == nil &&  tool.imageURL != nil {
+            image = UIImage(contentsOfFile: (tool.imageURL?.absoluteString)!)
+        }
+        
         if image != nil {
             let previewImageView = UIImageView(image: imageThumbnail(image!, size: CGSizeMake(100, 100)))
             previewImageView.contentMode = .ScaleAspectFill
@@ -111,84 +131,12 @@ class TwitterComposeViewController: SocialShareComposeViewController {
         return nil
     }
     
-    /**
-     Upload image to Twitter before use it on a post.
-     
-     *WARNING*
-     
-     There is a problem with current library/API and is not possible to upload any media
-     * https://dev.twitter.com/overview/api/response-codes
-     * http://stackoverflow.com/questions/31259869/share-video-on-twitter-with-fabric-api-without-composer-ios
-     * https://dev.twitter.com/rest/public/uploading-media
-     
-     As specified on documentation and forums, it is necessary to set Content-Type to multipart/form-data but it is not working either:
-     
-     uploadRequest.setValue("multipart/form-data", forHTTPHeaderField: "Content-Type")
-     
-     */
-    func uploadMedia() {
-        if (Twitter.sharedInstance().sessionStore.session() == nil) {
-            self.tool.finishedShare(self.rootView, error: SocialShareTwitterError.UserMustBeAuthenticated)
-            return
+    private func updateStatus(oauthswift: OAuth1Swift, mediaIds: String?, success: OAuthSwiftHTTPRequest.SuccessHandler?, failure: OAuthSwiftHTTPRequest.FailureHandler?) {
+        var parameters = ["status": self.contentText]
+        if mediaIds != nil {
+            parameters["media_ids"] = mediaIds
         }
-        
-        let client = TWTRAPIClient(userID: Twitter.sharedInstance().sessionStore.session()!.userID)
+        oauthswift.client.post("https://api.twitter.com/1.1/statuses/update.json", parameters: parameters, headers: nil, success: success, failure: failure)
+    }
 
-        let imageData = UIImageJPEGRepresentation((tool.image)!, 0.8)!.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
-        let mediaParams = ["media_data": imageData]
-        let uploadRequest: NSMutableURLRequest = client.URLRequestWithMethod("POST", URL: uploadEndpoint, parameters: mediaParams, error: nil) as! NSMutableURLRequest
-        
-        client.sendTwitterRequest(uploadRequest) { (response, data, error) -> Void in
-            var mediaId: String?
-            if (data != nil) {
-                do {
-                    let media = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
-                    mediaId = media.objectForKey("media_id") as? String
-                }
-                catch {}
-            }
-            self.postStatus(mediaId)
-        }
-    }
-    
-    
-    /**
-     To publish after send media to Twitter servers
-     
-     - parameter mediaId: Media identifier to be shared with post. If nil no media will be shared
-     */
-    func postStatus(mediaId: String?) {
-        guard Twitter.sharedInstance().sessionStore.session() != nil else {
-            tool.finishedShare(self.rootView, error: SocialShareTwitterError.UserMustBeAuthenticated)
-            return
-        }
-        
-        guard !self.contentText.isEmpty || tool.imageLink != nil else {
-            return
-        }
-        
-        var status: String = ""
-        
-        if self.contentText.isEmpty {
-            status = (tool.imageLink?.absoluteString)!
-        } else if tool.imageLink == nil {
-            status = self.contentText
-        } else {
-            status = "\(self.contentText) \(tool.imageLink!.absoluteString)"
-        }
-        
-        var post = ["status": status]
-        
-        if mediaId != nil {
-            post["media_ids"] = mediaId
-        }
-        
-        let client = TWTRAPIClient(userID: Twitter.sharedInstance().sessionStore.session()!.userID)
-        let request = client.URLRequestWithMethod("POST", URL: updateEndpoint, parameters: post, error: nil)
-        
-        client.sendTwitterRequest(request) { (response, data, error) -> Void in
-            self.tool.finishedShare(self.rootView, error: error)
-        }
-    }
-    
 }

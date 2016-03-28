@@ -16,6 +16,7 @@ public class SocialShareFacebook: SocialShareTool {
     
     var linkTitle: String?
     var image: UIImage?
+    var imageData: NSData?
     var imageLink: NSURL?
     
     override init() {
@@ -33,6 +34,9 @@ public class SocialShareFacebook: SocialShareTool {
         composeView = FBComposeViewController(shareTool: self)
     }
     
+    func logout() {
+        FBSDKLoginManager().logOut()
+    }
 }
 
 class FBComposeViewController: SocialShareComposeViewController {
@@ -56,7 +60,7 @@ class FBComposeViewController: SocialShareComposeViewController {
     }
     
     override func loadPreviewView() -> UIView! {
-        let image = tool.image
+        let image = tool.image ?? (tool.imageData != nil ? UIImage(data: tool.imageData!) : nil)
         if image != nil {
             let previewImageView = UIImageView(image: imageThumbnail(image!, size: CGSizeMake(100, 100)))
             previewImageView.contentMode = .ScaleAspectFill
@@ -72,9 +76,9 @@ class FBComposeViewController: SocialShareComposeViewController {
             return
         }
         
-        FBSDKGraphRequest(graphPath: "me?fields=name,email", parameters: nil).startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result: AnyObject!, error: NSError!) -> Void in
-            print(result)
-        }
+//        FBSDKGraphRequest(graphPath: "me?fields=name,email", parameters: nil).startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result: AnyObject!, error: NSError!) -> Void in
+//            print(result)
+//        }
         
         createPost()
     }
@@ -83,8 +87,8 @@ class FBComposeViewController: SocialShareComposeViewController {
         let parameters: [NSString:NSString] = [
             "caption": "powered_by".localized,
             "link": (tool.link?.absoluteString)!,
-            "name": (tool.linkTitle)!,
-            "picture": (tool.imageLink?.absoluteString)!,
+            "name": tool.linkTitle ?? "",
+            "picture": tool.imageLink?.absoluteString ?? "",
             "message": self.contentText,
             "type": "link"
         ]
