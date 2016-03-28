@@ -9,13 +9,6 @@
 import UIKit
 
 /**
- *  Email social share specific protocol
- */
-public protocol SocialShareEmailDelegate: SocialShareToolDelegate {
-    func sendEmail(email: String) throws
-}
-
-/**
  Email social share errors
  
  - InvalidEmail: Thrown when email is invalid (string does not comply with regular expression)
@@ -46,28 +39,21 @@ public class SocialShareEmail: SocialShareTool {
     }
     
     override func shareFromView(view: UIViewController) {
-        assert(self.delegate != nil || self.sendEmail != nil, "Delegate or closure must be provided to be able to share email")
+        assert(self.sendEmail != nil, "Delegate or closure must be provided to be able to share email")
         
         let alert = UIAlertController(title: alertTitle.localized, message: alertMessage.localized, preferredStyle: .Alert)
         alert.addAction(UIAlertAction(title: alertSendButtonText, style: .Default, handler: { (action: UIAlertAction!) in
             
             let email = alert.textFields![0].text!
             if !self.validate(email) {
-                self.delegate?.didPerformShare(SocialShareEmailError.InvalidEmail)
+                self.finished?(sender: nil, error: SocialShareEmailError.InvalidEmail)
                 return
             }
-            
-            do {
-                if self.sendEmail != nil {
-                    self.sendEmail!(email: email)
-                } else if self.delegate != nil {
-                    try (self.delegate as! SocialShareEmailDelegate).sendEmail(email)
-                }
-                self.delegate?.didPerformShare(nil)
-            } catch {
-                self.delegate?.didPerformShare(error)
+
+            if self.sendEmail != nil {
+                self.sendEmail?(email: email)
             }
-            
+            self.finished?(sender: nil, error: nil)
         }))
         
         alert.addAction(UIAlertAction(title: "Cancel".localized, style: UIAlertActionStyle.Cancel, handler: nil))

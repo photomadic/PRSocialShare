@@ -19,6 +19,9 @@ public enum SocialShareSMSError: ErrorType {
 
 public class SocialShareSMS: SocialShareTool, UITextFieldDelegate {
     
+    /// Link to be sent on sms
+    var link: NSURL?
+    
     private var twilioSID :String?
     private var twilioToken :String?
     private var fromNumber :String?
@@ -49,13 +52,13 @@ public class SocialShareSMS: SocialShareTool, UITextFieldDelegate {
                 NSURLSession.sharedSession().dataTaskWithRequest(request!, completionHandler: { (data, response, error) in
                     let urlResponse :NSHTTPURLResponse = response as! NSHTTPURLResponse
                     if error == nil && urlResponse.statusCode != 200 {
-                        self.finishedShare(view, error: SocialShareSMSError.InvalidResponse(response: urlResponse))
+                        self.finished?(sender:view, error: SocialShareSMSError.InvalidResponse(response: urlResponse))
                     } else {
-                        self.finishedShare(view, error: error)
+                        self.finished?(sender:view, error: error)
                     }
                 }).resume()
             } catch {
-                self.finishedShare(view, error: error)
+                self.finished?(sender:view, error: error)
             }
             
         }))

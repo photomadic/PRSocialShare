@@ -1,13 +1,13 @@
 Pod::Spec.new do |s|
   s.name             = "PRSocialShare"
   s.summary          = "Social sharing workflow for users on shared devices such as kiosks"
-  s.version          = "0.3.1"
+  s.version          = "0.3.2"
 
   s.homepage         = "https://github.com/praxent/PRSocialShare"
   s.license          = "MIT"
   s.author           = { "Joel Costa" => "joel.costa@praxent.com", "Albert Martin" => "albert@bethel.io" }
 
-  s.source           = { :git => "https://github.com/praxent/PRSocialShare.git", :tag => "v0.3.1" }
+  s.source           = { :git => "https://github.com/praxent/PRSocialShare.git", :tag => "v0.3.2" }
 
   s.platform     = :ios, "9.0"
   s.requires_arc = true

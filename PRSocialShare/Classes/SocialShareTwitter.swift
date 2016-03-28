@@ -21,12 +21,14 @@ public enum SocialShareTwitterError: ErrorType {
 /// Twiiter social share tool
 public class SocialShareTwitter: SocialShareTool {
 
-    /// Image local url to be shared
+    /// Local image URL to be shown on compose view
     var imageURL: NSURL?
-    
-    var consumerKey: String!
-    
-    var secretKey: String!
+    /// Local image URL to be shared on Twitter
+    var imageToShareURL: NSURL?
+    /// Twitter consumer key. Info.plist should have a dictionary SocialShareTool with a key/value TwitterConsumer and should not be a empty string
+    private var consumerKey: String!
+    /// Twitter secret key. Info.plist should have a dictionary SocialShareTool with a key/value TwitterSecret and should not be a empty string
+    private var secretKey: String!
     
     /**
      Initialize with consumer and secret Twitter keys.
@@ -72,7 +74,6 @@ class TwitterComposeViewController: SocialShareComposeViewController {
             return self.shareTool as! SocialShareTwitter
         }
     }
-    private var image: UIImage?
     
     override func isContentValid() -> Bool {
         charactersRemaining = 117 - contentText.characters.count
@@ -93,19 +94,19 @@ class TwitterComposeViewController: SocialShareComposeViewController {
             consumerKey:    tool.consumerKey,
             consumerSecret: tool.secretKey,
             requestTokenUrl: "https://api.twitter.com/oauth/request_token",
-            authorizeUrl:    "https://api.twitter.com/oauth/authorize",
+            authorizeUrl:    "https://api.twitter.com/oauth/authorize?force_login=true",
             accessTokenUrl:  "https://api.twitter.com/oauth/access_token"
         )
         oauthswift.authorize_url_handler = SafariURLHandler(viewController: self.rootView)
         
         oauthswift.authorizeWithCallbackURL( NSURL(string: "pr-social-share://oauth-callback/twitter")!, success: {credential, response, parameters in
             var data: String? = nil
-            if self.tool.imageURL != nil {
-                data = NSData(contentsOfURL: self.tool.imageURL!)?.base64EncodedStringWithOptions([NSDataBase64EncodingOptions.EncodingEndLineWithCarriageReturn, NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed])
+            if self.tool.imageToShareURL != nil {
+                data = NSData(contentsOfURL: self.tool.imageToShareURL!)?.base64EncodedStringWithOptions([NSDataBase64EncodingOptions.EncodingEndLineWithCarriageReturn, NSDataBase64EncodingOptions.EncodingEndLineWithLineFeed])
             }
             
             if data == nil {
-                self.updateStatus(oauthswift, mediaIds: nil, success: nil, failure: { error in print(error.localizedDescription) })
+                self.updateStatus(oauthswift, mediaIds: nil, success: nil, failure: { error in self.tool.finished?(sender: self.rootView, error: error) })
             } else {
                 oauthswift.client.post("https://upload.twitter.com/1.1/media/upload.json", parameters: ["media_data" : data!], headers: ["Content-Type": "image/png"], success: { (data, response) in
                     
@@ -113,22 +114,29 @@ class TwitterComposeViewController: SocialShareComposeViewController {
                     let mediaId = JSON["media_id_string"] as! String
                     self.updateStatus(oauthswift, mediaIds: mediaId, success: nil, failure: { error in print(error.localizedDescription) })
                     
-                    }, failure: { error in print(error.localizedDescription) })
+                    }, failure: { error in self.tool.finished?(sender: self.rootView, error: error) })
             }
-            }, failure: { error in print(error.localizedDescription) })
+            }, failure: { error in self.tool.finished?(sender: self.rootView, error: error) })
     }
     
     override func loadPreviewView() -> UIView! {
-        if image == nil &&  tool.imageURL != nil {
-            image = UIImage(contentsOfFile: (tool.imageURL?.absoluteString)!)
+        guard self.tool.imageURL != nil else {
+            return nil
         }
         
-        if image != nil {
-            let previewImageView = UIImageView(image: imageThumbnail(image!, size: CGSizeMake(100, 100)))
-            previewImageView.contentMode = .ScaleAspectFill
-            return previewImageView
+        let data = NSData(contentsOfURL: self.tool.imageURL!)
+        guard data != nil else {
+            return nil
         }
-        return nil
+        
+        let image = UIImage(data: data!)
+        guard image != nil else {
+            return nil
+        }
+        
+        let previewImageView = UIImageView(image: imageThumbnail(image!, size: CGSizeMake(100, 100)))
+        previewImageView.contentMode = .ScaleAspectFill
+        return previewImageView
     }
     
     private func updateStatus(oauthswift: OAuth1Swift, mediaIds: String?, success: OAuthSwiftHTTPRequest.SuccessHandler?, failure: OAuthSwiftHTTPRequest.FailureHandler?) {

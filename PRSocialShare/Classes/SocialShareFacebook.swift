@@ -14,10 +14,17 @@ public enum SocialShareFacebookError: ErrorType {
 
 public class SocialShareFacebook: SocialShareTool {
     
+    /// Local image URL to be shown on compose view
+    var imageURL: NSURL?
+    /// Link to be sent on Facebook post
+    var link: NSURL?
+    /// Link title to display on Facebook post
     var linkTitle: String?
-    var image: UIImage?
-    var imageData: NSData?
-    var imageLink: NSURL?
+    /// Image link to be sent on Facebook post
+    var imageToShareURL: NSURL?
+    /// Facebook post caption
+    var caption: String?
+    
     
     override init() {
         super.init()
@@ -28,7 +35,6 @@ public class SocialShareFacebook: SocialShareTool {
         
         message = ""
         messagePlaceholder = "Write your message here".localized
-        image = nil
         actionTitle = "Facebook".localized
         type = SocialShareType.Facebook
         composeView = FBComposeViewController(shareTool: self)
@@ -60,13 +66,23 @@ class FBComposeViewController: SocialShareComposeViewController {
     }
     
     override func loadPreviewView() -> UIView! {
-        let image = tool.image ?? (tool.imageData != nil ? UIImage(data: tool.imageData!) : nil)
-        if image != nil {
-            let previewImageView = UIImageView(image: imageThumbnail(image!, size: CGSizeMake(100, 100)))
-            previewImageView.contentMode = .ScaleAspectFill
-            return previewImageView
+        guard self.tool.imageURL != nil else {
+            return nil
         }
-        return nil
+        
+        let data = NSData(contentsOfURL: self.tool.imageURL!)
+        guard data != nil else {
+            return nil
+        }
+        
+        let image = UIImage(data: data!)
+        guard image != nil else {
+            return nil
+        }
+        
+        let previewImageView = UIImageView(image: imageThumbnail(image!, size: CGSizeMake(100, 100)))
+        previewImageView.contentMode = .ScaleAspectFill
+        return previewImageView
     }
     
     func userFinishedAuth(result: FBSDKLoginManagerLoginResult!, error: NSError!) {
@@ -76,25 +92,21 @@ class FBComposeViewController: SocialShareComposeViewController {
             return
         }
         
-//        FBSDKGraphRequest(graphPath: "me?fields=name,email", parameters: nil).startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result: AnyObject!, error: NSError!) -> Void in
-//            print(result)
-//        }
-        
         createPost()
     }
     
     func createPost() {
         let parameters: [NSString:NSString] = [
-            "caption": "powered_by".localized,
-            "link": (tool.link?.absoluteString)!,
+            "caption": tool.caption ?? "",
+            "link": tool.link?.absoluteString ?? "",
             "name": tool.linkTitle ?? "",
-            "picture": tool.imageLink?.absoluteString ?? "",
+            "picture": tool.imageToShareURL?.absoluteString ?? "",
             "message": self.contentText,
             "type": "link"
         ]
         
         FBSDKGraphRequest(graphPath: "me/feed", parameters: parameters, HTTPMethod: "POST").startWithCompletionHandler { (connection: FBSDKGraphRequestConnection!, result: AnyObject!, error: NSError!) -> Void in
-            self.tool.finishedShare(self.rootView, error: error)
+            self.tool.finished?(sender: self.rootView, error: error)
         }
     }
     

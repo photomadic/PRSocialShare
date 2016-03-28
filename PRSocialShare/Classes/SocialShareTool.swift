@@ -18,22 +18,8 @@ public enum SocialShareType: String {
     static let allValues = [Facebook, SMS, Twitter, Email]
 }
 
-/**
- *  Protocol to be performed
- */
-public protocol SocialShareToolDelegate {
-    /**
-     Method to be called after share is finished
-     
-     - parameter error: will be a non nil value if the message was not published
-     */
-    func didPerformShare(error: ErrorType?)
-}
-
 /// Generic class to be inherited by specific tools
 public class SocialShareTool: NSObject {
-    
-    var link: NSURL?
     
     /// Message to be sent
     var message: String?
@@ -47,8 +33,9 @@ public class SocialShareTool: NSObject {
     var validateRegex: String?
     /// View controller composer to be displayed (if applicable)
     var composeView: SocialShareComposeViewController?
-    /// Delegate to be called as soon as share is finished
-    var delegate: SocialShareToolDelegate?
+    
+    var finished: ((sender: AnyObject?, error: ErrorType?)->())?
+    
     /// Dictionary on Info.plist with social share tools settings
     private var settings: [String: String]?
     
@@ -105,12 +92,6 @@ public class SocialShareTool: NSObject {
         }
         
         return settings?[key]
-    }
-    
-    // #MARK: - SocialShareToolDelegate
-    
-    func finishedShare(view: UIViewController, error: ErrorType?) {
-        delegate?.didPerformShare(error)
     }
     
 }

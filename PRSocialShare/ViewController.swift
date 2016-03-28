@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController, SocialShareDelegate, SocialShareToolDelegate {
+class ViewController: UIViewController, SocialShareDelegate {
 
     @IBOutlet weak var image: UIImageView!
     
@@ -27,7 +27,6 @@ class ViewController: UIViewController, SocialShareDelegate, SocialShareToolDele
     }
 
     @IBAction func showButtonDidTouch(sender: AnyObject) {
-        let imageToShare: UIImage = image.image!
         let imageLink: NSURL = NSURL(string: "https://pixabay.com/static/uploads/photo/2015/10/01/21/39/background-image-967820_960_720.jpg")!
         
         let fileURL = (NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0]).URLByAppendingPathComponent("image.png", isDirectory: false)
@@ -40,16 +39,17 @@ class ViewController: UIViewController, SocialShareDelegate, SocialShareToolDele
         
         let facebookShare = SocialShareFacebook()
         facebookShare.actionTitle = "Facebook"
-        facebookShare.image = imageToShare
-        facebookShare.delegate = self
+        facebookShare.imageURL = fileURL
+        facebookShare.imageToShareURL = imageLink
         socialShare.facebookShare = facebookShare
         
                 
         // MARK: - Twitter configuration
         
         let twitterShare = SocialShareTwitter()
-        twitterShare.actionTitle = "Twitter"        
+        twitterShare.actionTitle = "Twitter"
         twitterShare.imageURL = fileURL
+        twitterShare.imageToShareURL = fileURL
         socialShare.twitterShare = twitterShare
         
         
